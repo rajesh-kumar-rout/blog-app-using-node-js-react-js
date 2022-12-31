@@ -1,0 +1,33 @@
+.table {
+    border: 2px solid var(--gray300);
+    border-radius: 4px;
+    overflow-x: auto;
+    text-align: center;
+}
+
+.table table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+.table td {
+    border-top: 2px solid var(--gray300);
+}
+
+.table th, .table td {
+    padding: 8px;
+    border-right: 2px solid var(--gray300);
+}
+
+.table td:last-child, .table th:last-child {
+    border-right: none;
+}
+
+.table tbody tr:nth-child(2n), .table thead tr:nth-child(2n+1){
+    background-color: var(--gray200);
+}
+
+.table img{
+    margin: auto;
+}

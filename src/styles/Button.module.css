@@ -1,0 +1,54 @@
+.btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: all 300ms;
+    cursor: pointer;
+}
+
+.btn[data-full]{
+    width: 100%;
+}
+
+.btn[data-btn-sm=true]{
+    padding: 4px;
+}
+
+.btn[data-primary]{
+    background-color: var(--gray600);
+    color: var(--white);
+}
+
+.btn[data-primary]:hover {
+    background-color: var(--gray800);
+}
+
+.btn[data-primary]:disabled {
+    background-color: var(--gray400);
+}
+
+.btn[data-danger]{
+    background-color: var(--red600);
+    color: var(--white);
+}
+
+.btn[data-danger]:hover {
+    background-color: var(--red800);
+}
+
+.btn[data-danger]:disabled {
+    background-color: var(--red400);
+}
+
+.btn[data-warning]{
+    background-color: var(--yellow600);
+    color: var(--white);
+}
+
+.btn[data-warning]:hover {
+    background-color: var(--yellow800);
+}
+
+.btn[data-warning]:disabled {
+    background-color: var(--yellow400);
+}

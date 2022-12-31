@@ -1,0 +1,12 @@
+.wrapper{
+    margin: 70px 0px 60px;
+    height: calc(100vh - (70px + 60px));
+    overflow-y: scroll;
+}
+
+.container{
+    max-width: 1014px;
+    padding: 20px 10px;
+    margin: auto;
+}
+

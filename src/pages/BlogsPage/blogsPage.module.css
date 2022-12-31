@@ -1,0 +1,24 @@
+.container{
+    max-width: 1024px;
+    margin: 0px auto;
+}
+
+.header{
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.title{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+@media (max-width: 1020px) {
+    .container{
+        margin: 0px 10px;
+    }
+}

@@ -1,0 +1,39 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.author{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.authorImg{
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+}
+
+.authorName{
+    color: var(--gray800);
+    font-weight: bold;
+}
+
+.postedAt{
+    color: var(--gray600);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.content{
+    color: var(--gray600);
+    line-height: 36px;
+    text-align: justify;
+}
