@@ -6,24 +6,24 @@ import { upload, destroy } from "../utils/cloudinary.js"
 
 const routes = Router()
 
-routes.get("/posts", async (req, res) => {
+routes.get("/blogs", async (req, res) => {
     const { currentUserId } = req.local
 
     const posts = await query("SELECT posts.id, posts.title, LEFT(posts.content, 100) AS content, posts.imgUrl, categories.name AS category, posts.createdAt, posts.updatedAt FROM posts INNER JOIN categories ON categories.id = posts.categoryId WHERE userId = ? ORDER BY id DESC", [currentUserId])
-    
+
     res.json(posts)
 })
 
-routes.get("/posts/:postId", async (req, res) => {
-    const { postId } = req.params
+routes.get("/blogs/:blogId", async (req, res) => {
+    const { blogId } = req.params
 
-    const posts = await fetch("SELECT * FROM posts WHERE id = ? LIMIT 1", [postId])
-    
+    const posts = await fetch("SELECT * FROM posts WHERE id = ? LIMIT 1", [blogId])
+
     res.json(posts)
 })
 
 routes.post(
-    "/posts",
+    "/blogs",
 
     body("title").trim().notEmpty().isLength({ max: 255 }),
 
@@ -55,9 +55,9 @@ routes.post(
 
 
 routes.patch(
-    "/posts/:postId",
+    "/blogs/:blogId",
 
-    param("postId").isInt(),
+    param("blogId").isInt(),
 
     body("categoryId").isInt(),
 
@@ -71,14 +71,14 @@ routes.patch(
 
     async (req, res) => {
         const { content, title, categoryId, img } = req.body
-        const { postId } = req.params
+        const { blogId } = req.params
         const { currentUserId } = req.local
 
         if (!await fetch("SELECT 1 FROM categories WHERE id = ? LIMIT 1", [categoryId])) {
             return res.status(404).json({ message: "Category not found" })
         }
 
-        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [postId, currentUserId])
+        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
 
         if (!post) {
             return res.status(404).json({ message: "Post not found" })
@@ -91,24 +91,24 @@ routes.patch(
             post.imgId = imgRes.public_id
         }
 
-        await query("UPDATE posts SET title = ?, content = ?, imgUrl = ?, imgId = ?, categoryId = ? WHERE id = ?", [title, content, post.imgUrl, post.imgId, categoryId, postId])
+        await query("UPDATE posts SET title = ?, content = ?, imgUrl = ?, imgId = ?, categoryId = ? WHERE id = ?", [title, content, post.imgUrl, post.imgId, categoryId, blogId])
 
         res.status(201).json({ message: "Post updated successfully" })
     }
 )
 
 routes.delete(
-    "/posts/:postId",
+    "/blogs/:blogId",
 
-    param("postId").isInt(),
+    param("blogId").isInt(),
 
     checkValidationError,
 
     async (req, res) => {
-        const { postId } = req.params
+        const { blogId } = req.params
         const { currentUserId } = req.local
 
-        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [postId, currentUserId])
+        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
 
         if (!post) {
             return res.status(404).json({ message: "Post not found" })
@@ -116,10 +116,18 @@ routes.delete(
 
         post.imgUrl && await destroy(post.imgId)
 
-        await query("DELETE FROM posts WHERE id = ? AND userId = ?", [postId, currentUserId])
+        await query("DELETE FROM posts WHERE id = ? AND userId = ?", [blogId, currentUserId])
 
         res.json({ message: "Post deleted successfully" })
     }
 )
+
+routes.get("/", async (req, res) => {
+    const { currentUserId } = req.local
+
+    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM users WHERE id = ? LIMIT 1", [currentUserId])
+
+    res.json(user)
+})
 
 export default routes

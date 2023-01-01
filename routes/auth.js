@@ -91,20 +91,6 @@ routes.patch(
     }
 )
 
-routes.get(
-    "/account",
-
-    authenticate,
-
-    async (req, res) => {
-        const { currentUserId } = req.local
-
-        const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM users WHERE id = ? LIMIT 1", [currentUserId])
-
-        res.json(user)
-    }
-)
-
 routes.patch(
     "/edit-account",
 
