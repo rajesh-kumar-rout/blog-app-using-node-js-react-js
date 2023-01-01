@@ -9,17 +9,17 @@ const routes = Router()
 routes.get("/blogs", async (req, res) => {
     const { currentUserId } = req.local
 
-    const posts = await query("SELECT posts.id, posts.title, LEFT(posts.content, 100) AS content, posts.imgUrl, categories.name AS category, posts.createdAt, posts.updatedAt FROM posts INNER JOIN categories ON categories.id = posts.categoryId WHERE userId = ? ORDER BY id DESC", [currentUserId])
+    const blogs = await query("SELECT b_blogs.id, b_blogs.title, LEFT(b_blogs.content, 100) AS content, b_blogs.imgUrl, b_categories.name AS category, b_blogs.createdAt, b_blogs.updatedAt FROM b_blogs INNER JOIN b_categories ON b_categories.id = b_blogs.categoryId WHERE b_blogs.userId = ? ORDER BY id DESC", [currentUserId])
 
-    res.json(posts)
+    res.json(blogs)
 })
 
 routes.get("/blogs/:blogId", async (req, res) => {
     const { blogId } = req.params
 
-    const posts = await fetch("SELECT * FROM posts WHERE id = ? LIMIT 1", [blogId])
+    const blog = await fetch("SELECT * FROM b_blogs WHERE id = ? LIMIT 1", [blogId])
 
-    res.json(posts)
+    res.json(blog)
 })
 
 routes.post(
@@ -39,7 +39,7 @@ routes.post(
         const { content, title, categoryId, img } = req.body
         const { currentUserId } = req.local
 
-        if (!await fetch("SELECT 1 FROM categories WHERE id = ? LIMIT 1", [categoryId])) {
+        if (!await fetch("SELECT 1 FROM b_categories WHERE id = ? LIMIT 1", [categoryId])) {
             return res.status(404).json({ message: "Category not found" })
         }
 
@@ -47,12 +47,11 @@ routes.post(
         const imgUrl = imgRes.secure_url
         const imgId = imgRes.public_id
 
-        await query("INSERT INTO posts (title, content, imgUrl, imgId, userId, categoryId) VALUES (?, ?, ?, ?, ?, ?)", [title, content, imgUrl, imgId, currentUserId, categoryId])
+        await query("INSERT INTO b_blogs (title, content, imgUrl, imgId, userId, categoryId) VALUES (?, ?, ?, ?, ?, ?)", [title, content, imgUrl, imgId, currentUserId, categoryId])
 
-        res.status(201).json({ message: "Post added successfully" })
+        res.status(201).json({ message: "Blog added successfully" })
     }
 )
-
 
 routes.patch(
     "/blogs/:blogId",
@@ -74,26 +73,26 @@ routes.patch(
         const { blogId } = req.params
         const { currentUserId } = req.local
 
-        if (!await fetch("SELECT 1 FROM categories WHERE id = ? LIMIT 1", [categoryId])) {
+        if (!await fetch("SELECT 1 FROM b_categories WHERE id = ? LIMIT 1", [categoryId])) {
             return res.status(404).json({ message: "Category not found" })
         }
 
-        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
+        const blog = await fetch("SELECT * FROM b_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
 
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" })
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" })
         }
 
         if (img) {
-            post.imgId && (await destroy(post.imgId))
+            blog.imgId && (await destroy(blog.imgId))
             const imgRes = await upload(img)
-            post.imgUrl = imgRes.secure_url
-            post.imgId = imgRes.public_id
+            blog.imgUrl = imgRes.secure_url
+            blog.imgId = imgRes.public_id
         }
 
-        await query("UPDATE posts SET title = ?, content = ?, imgUrl = ?, imgId = ?, categoryId = ? WHERE id = ?", [title, content, post.imgUrl, post.imgId, categoryId, blogId])
+        await query("UPDATE b_blogs SET title = ?, content = ?, imgUrl = ?, imgId = ?, categoryId = ? WHERE id = ?", [title, content, blog.imgUrl, blog.imgId, categoryId, blogId])
 
-        res.status(201).json({ message: "Post updated successfully" })
+        res.status(201).json({ message: "Blog updated successfully" })
     }
 )
 
@@ -108,24 +107,24 @@ routes.delete(
         const { blogId } = req.params
         const { currentUserId } = req.local
 
-        const post = await fetch("SELECT * FROM posts WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
+        const blog = await fetch("SELECT * FROM b_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
 
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" })
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" })
         }
 
-        post.imgUrl && await destroy(post.imgId)
+        blog.imgUrl && await destroy(blog.imgId)
 
-        await query("DELETE FROM posts WHERE id = ? AND userId = ?", [blogId, currentUserId])
+        await query("DELETE FROM b_blogs WHERE id = ? AND userId = ?", [blogId, currentUserId])
 
-        res.json({ message: "Post deleted successfully" })
+        res.json({ message: "Blog deleted successfully" })
     }
 )
 
 routes.get("/", async (req, res) => {
     const { currentUserId } = req.local
 
-    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM users WHERE id = ? LIMIT 1", [currentUserId])
+    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM b_users WHERE id = ? LIMIT 1", [currentUserId])
 
     res.json(user)
 })

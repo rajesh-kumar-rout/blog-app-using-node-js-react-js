@@ -20,7 +20,7 @@ app.use(setUpRequest)
 app.use(express.static("view"))
 
 app.use("/api/auth", authRoutes)
-app.use("/api/blogs", authenticate, blogsRoutes)
+app.use("/api/blogs", blogsRoutes)
 app.use("/api/account", authenticate, accountRoutes)
 app.use("/api/categories", authenticate, categoriesRoutes)
 
