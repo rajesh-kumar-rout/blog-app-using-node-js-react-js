@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { Formik, Field, ErrorMessage } from "formik"
+import { Formik, Field, ErrorMessage, Form } from "formik"
 import { object, string, ref } from "yup"
 import { toast } from "react-toastify"
 import axios from "../../utils/axios"
@@ -30,15 +30,13 @@ const validationSchema = object().shape({
 })
 
 export default function SignUpPage() {
-    const navigate = useNavigate()
-
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
 
         try {
             const { data } = await axios.post("/auth/sign-up", values)
             localStorage.setItem("jwtToken", data.jwtToken)
-            navigate("/")
+            window.location.href = "/"
         } catch ({ response }) {
             response?.status === 409 && toast.error("Email already taken")
         }
@@ -58,7 +56,7 @@ export default function SignUpPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <form className={form.form}>
+                <Form className={form.form}>
                     <div className={form.header}>SIGN UP</div>
 
                     <div className={form.body}>
@@ -120,7 +118,7 @@ export default function SignUpPage() {
 
                         <p className={form.formLink}>Already have an account ? <Link to="/account/login">Login</Link></p>
                     </div>
-                </form>
+                </Form>
             )}
         </Formik>
     )

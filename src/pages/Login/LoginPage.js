@@ -13,7 +13,6 @@ const validationSchema = object().shape({
 })
 
 export default function LoginPage() {
-    const navigate = useNavigate()
     const [searchParams] = useSearchParams()
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -24,7 +23,6 @@ export default function LoginPage() {
             localStorage.setItem("jwtToken", data.jwtToken)
             window.location.href = searchParams.get("return") ? searchParams.get("return") : "/"
         } catch ({ response }) {
-            console.log(response);
             response?.status === 422 && toast.error("Invalid email or password")
         }
 

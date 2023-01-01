@@ -12,7 +12,7 @@ export default function BlogsPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchBlogs = async () => {
-        const { data } = await axios.get("/users/posts")
+        const { data } = await axios.get("/account/blogs")
         setBlogs(data)
         setIsFetching(false)
         console.log(data);
@@ -20,7 +20,7 @@ export default function BlogsPage() {
 
     const handleDeleteBlog = async (blogId) => {
         setIsFetching(true)
-        const {data} = await axios.delete(`/users/posts/${blogId}`)
+        const {data} = await axios.delete(`/account/blogs/${blogId}`)
         console.log(data);
         setBlogs(blogs.filter(blog => blog.id !== blogId))
         setIsFetching(false)

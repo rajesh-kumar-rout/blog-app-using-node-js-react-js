@@ -11,6 +11,7 @@ export const postImgUrl = (url) => {
 }
 
 export const getBase64Img = (image) => {
+    image  = new File([image], image.name, { type: image.type });
     const reader = new FileReader()
     reader.readAsDataURL(image)
     return new Promise((resolve, reject) => {

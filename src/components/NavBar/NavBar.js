@@ -5,7 +5,6 @@ import { AccountContext } from "../Account"
 import styles from "./NavBar.module.css"
 
 export default function NavBar() {
-    const navigate = useNavigate()
     const { account } = useContext(AccountContext)
     const [isDropDownOpened, setIsDropDownOpened] = useState(false)
 

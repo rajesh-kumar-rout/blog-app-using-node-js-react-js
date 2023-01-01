@@ -5,7 +5,7 @@ import { Formik, Field, ErrorMessage, Form } from "formik"
 import { object, string, number } from "yup"
 import { toast } from "react-toastify"
 import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getBase64Img } from "../../utils/functions"
 
 const validationSchema = object().shape({
@@ -31,7 +31,7 @@ export default function EditBlogPage() {
     const [categories, setCategories] = useState([])
 
     const fetchBlog = async () => {
-        const blogRes = await axios.get(`/users/posts/${blogId}`)
+        const blogRes = await axios.get(`/account/blogs/${blogId}`)
         const categoryRes = await axios.get("/categories")
         console.log(blogRes.data, "d", blogId);
         setBlog(blogRes.data)
@@ -42,7 +42,7 @@ export default function EditBlogPage() {
     const handleSubmit = async (values, { setSubmitting }) => {
         values.img && (values.img = await getBase64Img(values.img))
         setSubmitting(true)
-        await axios.patch(`/users/posts/${blogId}`, values)
+        await axios.patch(`/account/blogs/${blogId}`, values)
         toast.success("Blog edited successfully")
         setSubmitting(false)
     }

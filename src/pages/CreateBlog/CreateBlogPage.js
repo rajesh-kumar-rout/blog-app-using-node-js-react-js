@@ -39,7 +39,7 @@ export default function CreateBlogPage() {
         setSubmitting(true)
 
         try {
-            await axios.post("/users/posts", values)
+            await axios.post("/account/blogs", values)
             toast.success("Blog created successfully")
             resetForm()
             imgRef.current.value = ""
@@ -86,12 +86,11 @@ export default function CreateBlogPage() {
                         </div>
 
                         <div className={form.group}>
-                            <label htmlFor="image" className={form.textLabel}>Image</label>
-                            <Field
+                            <label htmlFor="img" className={form.textLabel}>Image</label>
+                            <input
                                 type="file"
-                                id="image"
+                                id="img"
                                 className={form.textInput}
-                                name="image"
                                 onChange={event => setFieldValue("img", event.target.files[0])}
                                 accept="image/png, image/jpeg, image/jpg"
                                 required

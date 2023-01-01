@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PostDetails from "../../components/PostDetails/PostDetails";
-import RelatedPost from "../../components/RelatedPost/RelatedPost";
-import { posts, post } from "../../utils/faker";
-import styles from "./PostDetailsPage.module.css"
+import BlogDetails from "../../components/PostDetails/PostDetails";
+import RelatedBlog from "../../components/RelatedPost/RelatedPost";
+import styles from "./blogDetailsPage.module.css"
 import axios from "../../utils/axios"
 
-export default function PostDetailsPage() {
+export default function BlogDetailsPage() {
     const { postId } = useParams()
 
     const [blog, setBlog] = useState({})
@@ -14,9 +13,9 @@ export default function PostDetailsPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchBlogDetails = async () => {
-        const { data } = await axios.get(`/posts/${postId}`)
-        setBlog(data.post)
-        setRelatedBlogs(data.relatedPosts)
+        const { data } = await axios.get(`/blogs/${postId}`)
+        setBlog(data.blog)
+        setRelatedBlogs(data.relatedBlogs)
         setIsFetching(false)
     }
 
@@ -30,14 +29,14 @@ export default function PostDetailsPage() {
 
     return (
         <div className={styles.container}>
-            <PostDetails post={blog} />
+            <BlogDetails blog={blog} />
             <div>
                 <h4 className={styles.title}>Related Post</h4>
                 <div className={styles.posts}>
-                    {relatedBlogs.map(post => (
-                        <RelatedPost
-                            key={post.id}
-                            post={post}
+                    {relatedBlogs.map(blog => (
+                        <RelatedBlog
+                            key={blog.id}
+                            blog={blog}
                         />
                     ))}
                 </div>

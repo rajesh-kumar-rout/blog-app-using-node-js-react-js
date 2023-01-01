@@ -1,13 +1,13 @@
 import { Routes, Route } from "react-router-dom"
 import { Authenticated, NotAuthenticated } from "./components/Auth"
 import Layout from "./components/Layout/Layout"
-import ChangePasswordPage from "./pages/ChangePasswordPage/ChangePasswordPage"
-import EditAccountPage from "./pages/EditAccountPage/EditAccountPage"
-import LoginPage from "./pages/LoginPage/LoginPage"
-import SignUpPage from "./pages/SignUpPage/SignUpPage"
-import HomePage from "./pages/HomePae/HomePage"
-import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage"
-import BlogsPage from "./pages/BlogsPage/BlogsPage"
+import ChangePasswordPage from "./pages/ChangePassword/ChangePasswordPage"
+import EditAccountPage from "./pages/EditAccount/EditAccountPage"
+import LoginPage from "./pages/Login/LoginPage"
+import SignUpPage from "./pages/SignUp/SignUpPage"
+import HomePage from "./pages/Home/HomePage"
+import BlogDetailsPage from "./pages/BlogDetails/BlogDetailsPage"
+import BlogsPage from "./pages/Blogs/BlogsPage"
 import CreateBlogPage from "./pages/CreateBlog/CreateBlogPage"
 import EditBlogPage from "./pages/EditBlog/EditBlogPage"
 import Account from "./components/Account"
@@ -18,7 +18,7 @@ export default function App() {
             <Routes>
                 <Route element={<Layout />}>
                     <Route index element={<HomePage />} />
-                    <Route path="/posts/:postId" element={<PostDetailsPage />} />
+                    <Route path="/blogs/:postId" element={<BlogDetailsPage />} />
 
                     <Route element={<Authenticated />}>
                         <Route path="/account/change-password" element={<ChangePasswordPage />} />

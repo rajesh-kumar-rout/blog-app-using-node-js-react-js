@@ -10,7 +10,7 @@ export default function Account({ children }) {
     const [account, setAccount] = useState()
 
     const fetchAccount = async () => {
-        const { data } = await axios.get("/auth/account")
+        const { data } = await axios.get("/account")
         setAccount(data)
         setIsFetching(false)
     }

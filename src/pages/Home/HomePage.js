@@ -8,7 +8,7 @@ export default function HomePage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchBlogs = async () => {
-        const { data } = await axios.get("/posts")
+        const { data } = await axios.get("/blogs")
         setBlogs(data)
         setIsFetching(false)
     }
@@ -19,10 +19,10 @@ export default function HomePage() {
 
     return (
         <div>
-            {blogs.map(post => (
+            {blogs.map(blog => (
                 <Post
-                    key={post.id}
-                    post={post}
+                    key={blog.id}
+                    blog={blog}
                 />
             ))}
         </div>
