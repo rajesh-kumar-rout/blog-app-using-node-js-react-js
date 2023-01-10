@@ -159,7 +159,7 @@ routes.patch(
 routes.get("/", authenticate, async (req, res) => {
     const { currentUserId } = req
 
-    const user = await fetch("SELECT id, name, email FROM blog_users WHERE id = ? LIMIT 1", [currentUserId])
+    const user = await fetch("SELECT id, name, email, profileImgUrl FROM blog_users WHERE id = ? LIMIT 1", [currentUserId])
 
     res.json(user)
 })
