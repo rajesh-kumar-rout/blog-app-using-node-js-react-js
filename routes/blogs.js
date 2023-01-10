@@ -11,7 +11,7 @@ routes.get("/", async (req, res) => {
 routes.get("/:blogId", async (req, res) => {
     const { blogId } = req.params
 
-    const blog = await fetch('SELECT blog_blogs.id, blog_blogs.title, blog_blogs.categoryId, blog_blogs.content, blog_blogs.imgUrl, blog_blogs.createdAt, blog_users.name AS authorName, blog_users.profileImgUrl AS authorImgUrl FROM blog_blogs INNER JOIN blog_users ON blog_users.id = blog_blogs.userId WHERE blog_blogs.id = ? LIMIT 1', [blogId])
+    const blog = await fetch('SELECT blog_blogs.id, blog_blogs.title, blog_blogs.content, blog_blogs.imgUrl, blog_blogs.createdAt, blog_users.name AS authorName, blog_users.profileImgUrl AS authorImgUrl FROM blog_blogs INNER JOIN blog_users ON blog_users.id = blog_blogs.userId WHERE blog_blogs.id = ? LIMIT 1', [blogId])
 
     if (!blog) {
         return res.status(404).json({ message: "Blog not found" })
