@@ -1,13 +1,17 @@
-import { buildCheckFunction, validationResult } from "express-validator"
+import { validationResult } from "express-validator"
 
-export const checkFileMimeType = (...types) => (value) => types.includes(value.mimetype)
-
-export const checkIsFileTruncated = (value) => !value.truncated
+export function isBase64Img(value) {
+    return value.startsWith("data:image/jpeg") || value.startsWith("data:image/png") ||
+        value.startsWith("data:image/jpg")
+}
 
 export const checkValidationError = (req, res, next) => {
     const errors = validationResult(req).array()
-    if (errors.length) return res.status(422).json(errors)
+
+    if (errors.length) {
+        return res.status(422).json(errors)
+    }
+
     next()
 }
 
-export const files = buildCheckFunction(["files"])
