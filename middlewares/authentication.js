@@ -1,22 +1,19 @@
 import { config } from "dotenv"
-import jwt from "jsonwebtoken"
 
 config()
 
 export function authenticate(req, res, next) {
-    const { authorization } = req.headers
-
-    const accessToken = authorization && authorization.startsWith("Bearer ") 
-        ? authorization.substring(7, authorization.length) : null
-
-    try {
-        
-        const { currentUserId } = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRECT)
-        req.currentUserId = currentUserId
-        next()
-
-    } catch {
-
-        res.status(401).json("Unauthorized")
+    if (!req.session.userId) {
+        return res.status(401).json({ message: "Unauthorized" })
     }
+
+    next()
+}
+
+export async function verifyCsrf(req, res, next) {
+    if (req.method !== "GET" && req.headers['x-xsrf-token'] !== req.session.csrfToken) {
+        return res.status(403).json({ message: "Access denied" })
+    }
+
+    next()
 }

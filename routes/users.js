@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { query, fetch } from "../database/connection.js"
+import { query, fetch } from "../utils/database.js"
 import { body, param } from "express-validator"
 import { checkValidationError, isBase64Img } from "../utils/validation.js"
 import { upload, destroy } from "../utils/cloudinary.js"
@@ -7,9 +7,9 @@ import { upload, destroy } from "../utils/cloudinary.js"
 const routes = Router()
 
 routes.get("/me/blogs", async (req, res) => {
-    const { currentUserId } = req
+    const { userId } = req.session
 
-    const blogs = await query("SELECT blog_blogs.id, blog_blogs.title, LEFT(blog_blogs.content, 100) AS content, blog_blogs.imgUrl, blog_categories.name AS category, blog_blogs.createdAt, blog_blogs.updatedAt FROM blog_blogs INNER JOIN blog_categories ON blog_categories.id = blog_blogs.categoryId WHERE blog_blogs.userId = ? ORDER BY id DESC", [currentUserId])
+    const blogs = await query("SELECT blog_blogs.id, blog_blogs.title, LEFT(blog_blogs.content, 100) AS content, blog_blogs.imgUrl, blog_categories.name AS category, blog_blogs.createdAt, blog_blogs.updatedAt FROM blog_blogs INNER JOIN blog_categories ON blog_categories.id = blog_blogs.categoryId WHERE blog_blogs.userId = ? ORDER BY id DESC", [userId])
 
     res.json(blogs)
 })
@@ -37,7 +37,7 @@ routes.post(
 
     async (req, res) => {
         const { content, title, categoryId, img } = req.body
-        const { currentUserId } = req
+        const { userId } = req.session
 
         if (!await fetch("SELECT 1 FROM blog_categories WHERE id = ? LIMIT 1", [categoryId])) {
             return res.status(404).json({ message: "Category not found" })
@@ -45,7 +45,7 @@ routes.post(
 
         const { imgUrl, imgId } = await upload(img)
 
-        await query("INSERT INTO blog_blogs (title, content, imgUrl, imgId, userId, categoryId) VALUES (?, ?, ?, ?, ?, ?)", [title, content, imgUrl, imgId, currentUserId, categoryId])
+        await query("INSERT INTO blog_blogs (title, content, imgUrl, imgId, userId, categoryId) VALUES (?, ?, ?, ?, ?, ?)", [title, content, imgUrl, imgId, userId, categoryId])
 
         res.status(201).json({ message: "Blog added successfully" })
     }
@@ -72,13 +72,13 @@ routes.patch(
     async (req, res) => {
         const { content, title, categoryId, img } = req.body
         const { blogId } = req.params
-        const { currentUserId } = req
+        const { userId } = req.session
 
         if (!await fetch("SELECT 1 FROM blog_categories WHERE id = ? LIMIT 1", [categoryId])) {
             return res.status(404).json({ message: "Category not found" })
         }
 
-        const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
+        const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, userId])
 
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" })
@@ -99,9 +99,9 @@ routes.patch(
 
 routes.delete("/me/blogs/:blogId", async (req, res) => {
     const { blogId } = req.params
-    const { currentUserId } = req
+    const { userId } = req.session
 
-    const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, currentUserId])
+    const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, userId])
 
     if (!blog) {
         return res.status(404).json({ message: "Blog not found" })
@@ -109,17 +109,9 @@ routes.delete("/me/blogs/:blogId", async (req, res) => {
 
     blog.imgUrl && await destroy(blog.imgId)
 
-    await query("DELETE FROM blog_blogs WHERE id = ? AND userId = ?", [blogId, currentUserId])
+    await query("DELETE FROM blog_blogs WHERE id = ? AND userId = ?", [blogId, userId])
 
     res.json({ message: "Blog deleted successfully" })
-})
-
-routes.get("/", async (req, res) => {
-    const { currentUserId } = req.local
-
-    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM b_users WHERE id = ? LIMIT 1", [currentUserId])
-
-    res.json(user)
 })
 
 export default routes

@@ -1,11 +1,11 @@
-import { Router } from "express"
-import { query, fetch } from "../database/connection.js"
-import { upload, destroy } from "../utils/cloudinary.js"
-import { authenticate } from "../middlewares/authentication.js"
-import { body } from "express-validator"
-import { checkValidationError } from "../utils/validation.js"
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import crypto from "crypto"
+import { Router } from "express"
+import { body } from "express-validator"
+import { authenticate } from "../middlewares/authentication.js"
+import { destroy, upload } from "../utils/cloudinary.js"
+import { fetch, query } from "../utils/database.js"
+import { checkValidationError } from "../utils/validation.js"
 
 const routes = Router()
 
@@ -27,11 +27,9 @@ routes.post(
             return res.status(422).json({ message: "Invalid email or password" })
         }
 
-        const accessToken = jwt.sign({ currentUserId: user.id }, process.env.ACCESS_TOKEN_SECRECT, { expiresIn: "1h" })
+        req.session.userId = user.id
 
-        const refreshToken = jwt.sign({ currentUserId: user.id }, process.env.REFRESH_TOKEN_SECRECT, { expiresIn: "720h" })
-
-        res.json({ accessToken, refreshToken })
+        res.json({ message: "Login successfull" })
     }
 )
 
@@ -60,32 +58,16 @@ routes.post(
 
         const { insertId } = await query("INSERT INTO blog_users (name, email, password) VALUES (?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
 
-        const accessToken = jwt.sign({ currentUserId: insertId }, process.env.ACCESS_TOKEN_SECRECT, { expiresIn: "1h" })
+        req.session.userId = insertId
 
-        const refreshToken = jwt.sign({ currentUserId: insertId }, process.env.REFRESH_TOKEN_SECRECT, { expiresIn: "720h" })
-
-        res.status(201).json({ accessToken, refreshToken })
+        res.status(201).json({ message: "Register successfull" })
     }
 )
 
-routes.get("/refresh-token", async (req, res) => {
-    const { authorization } = req.headers
+routes.get("/logout", async (req, res) => {
+    req.session.destroy()
 
-    const refreshToken = authorization && authorization.startsWith("Bearer ")
-        ? authorization.substring(7, authorization.length) : null
-
-    try {
-
-        const { currentUserId } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRECT)
-
-        const accessToken = jwt.sign({ currentUserId }, process.env.ACCESS_TOKEN_SECRECT, { expiresIn: "1h" })
-
-        res.json({ accessToken })
-
-    } catch {
-
-        res.status(401).json("Unauthorized")
-    }
+    res.json({ message: "Logout successfull" })
 })
 
 routes.patch(
@@ -100,16 +82,16 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { userId } = req.session
         const { oldPassword, newPassword } = req.body
 
-        const user = await fetch("SELECT password FROM blog_users WHERE id = ? LIMIT 1", [currentUserId])
+        const user = await fetch("SELECT password FROM blog_users WHERE id = ? LIMIT 1", [userId])
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
             return res.status(422).json({ message: "Old password does not match" })
         }
 
-        await query("UPDATE blog_users SET password = ? WHERE id = ?", [await bcrypt.hash(newPassword, 10), currentUserId])
+        await query("UPDATE blog_users SET password = ? WHERE id = ?", [await bcrypt.hash(newPassword, 10), userId])
 
         res.json({ message: "Password changed successfully" })
     }
@@ -132,14 +114,14 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { currentUserId } = req
+        const { userId } = req.session
         const { name, email, profileImg } = req.body
 
-        if (await fetch("SELECT 1 FROM blog_users WHERE email = ? AND id != ? LIMIT 1", [email, currentUserId])) {
+        if (await fetch("SELECT 1 FROM blog_users WHERE email = ? AND id != ? LIMIT 1", [email, userId])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const user = await fetch("SELECT * FROM blog_users WHERE id = ? LIMIT 1", [currentUserId])
+        const user = await fetch("SELECT * FROM blog_users WHERE id = ? LIMIT 1", [userId])
 
         if (profileImg) {
             const { imgUrl, imgId } = await upload(profileImg)
@@ -148,7 +130,7 @@ routes.patch(
             user.profileImgId = imgId
         }
 
-        await query("UPDATE blog_users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ? WHERE id = ?", [name, email, user.profileImgUrl, user.profileImgId, currentUserId])
+        await query("UPDATE blog_users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ? WHERE id = ?", [name, email, user.profileImgUrl, user.profileImgId, userId])
 
         res.json({
             profileImgUrl: user.profileImgUrl
@@ -156,12 +138,16 @@ routes.patch(
     }
 )
 
-routes.get("/", authenticate, async (req, res) => {
-    const { currentUserId } = req
+routes.get("/", async (req, res) => {
+    const { userId } = req.session
 
-    const user = await fetch("SELECT id, name, email, profileImgUrl FROM blog_users WHERE id = ? LIMIT 1", [currentUserId])
+    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM blog_users WHERE id = ? LIMIT 1", [userId ?? null])
 
-    res.json(user)
+    const csrfToken = crypto.randomUUID()
+
+    req.session.csrfToken = csrfToken
+
+    res.cookie("X-XSRF-TOKEN", csrfToken).json(user)
 })
 
 export default routes
