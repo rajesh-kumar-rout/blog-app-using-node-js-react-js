@@ -1,15 +1,16 @@
 import { v2 as cloudinary } from "cloudinary"
-import { config } from "dotenv"
+import dotenv from "dotenv"
 
-config()
+dotenv.config()
 
 cloudinary.config({ secure: true })
 
 export default cloudinary
 
-export async function upload(img) {
-    const { secure_url, public_id } = await cloudinary.uploader.upload(img)
-    return { imgUrl: secure_url, imgId: public_id }
+export async function upload(image) {
+    const { secure_url, public_id } = await cloudinary.uploader.upload(image)
+
+    return { url: secure_url, id: public_id }
 }
 
 export const destroy = cloudinary.uploader.destroy

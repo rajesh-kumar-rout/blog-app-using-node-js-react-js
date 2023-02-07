@@ -1,11 +1,13 @@
 import bcrypt from "bcrypt"
-import crypto from "crypto"
 import { Router } from "express"
 import { body } from "express-validator"
-import { authenticate } from "../middlewares/authentication.js"
-import { destroy, upload } from "../utils/cloudinary.js"
-import { fetch, query } from "../utils/database.js"
+import jwt from "jsonwebtoken"
+import User from "../models/user.js"
 import { checkValidationError } from "../utils/validation.js"
+import dotenv from "dotenv"
+import { isAuthenticated } from "../middlewares/authentication.js"
+
+dotenv.config()
 
 const routes = Router()
 
@@ -21,15 +23,24 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await fetch("SELECT * FROM blog_users WHERE email = ? LIMIT 1", [email])
+        const user = await User.findOne({ email })
 
         if (!(user && await bcrypt.compare(password, user.password))) {
-            return res.status(422).json({ message: "Invalid email or password" })
+            return res.status(422).json({ error: "Invalid email or password" })
         }
 
-        req.session.userId = user.id
+        const authToken = jwt.sign(
+            {
+                _id: user.id,
+                isAdmin: user.isAdmin
+            },
+            process.env.AUTH_TOKEN_SECRECT,
+            {
+                expiresIn: "72h"
+            }
+        )
 
-        res.json({ message: "Login successfull" })
+        res.json({authToken})
     }
 )
 
@@ -37,8 +48,10 @@ routes.post(
     "/register",
 
     body("name")
+        .isString()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .notEmpty()
+        .isLength({ max: 30 }),
 
     body("email")
         .trim()
@@ -52,28 +65,37 @@ routes.post(
     async (req, res) => {
         const { name, email, password } = req.body
 
-        if (await fetch("SELECT 1 FROM blog_users WHERE email = ? LIMIT 1", [email])) {
-            return res.status(409).json({ message: "Email already taken" })
+        if (await User.findOne({ email })) {
+            return res.status(409).json({ error: "Email already taken" })
         }
 
-        const { insertId } = await query("INSERT INTO blog_users (name, email, password) VALUES (?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
+        const user = await User.create({
+            name,
+            email,
+            password: await bcrypt.hash(password, 10)
+        })
 
-        req.session.userId = insertId
+        user.password = undefined
 
-        res.status(201).json({ message: "Register successfull" })
+        const authToken = jwt.sign(
+            {
+                _id: user.id,
+                isAdmin: user.isAdmin
+            },
+            process.env.AUTH_TOKEN_SECRECT,
+            {
+                expiresIn: "72h"
+            }
+        )
+
+        res.json({ user, authToken })
     }
 )
-
-routes.get("/logout", async (req, res) => {
-    req.session.destroy()
-
-    res.json({ message: "Logout successfull" })
-})
 
 routes.patch(
     "/change-password",
 
-    authenticate,
+    isAuthenticated,
 
     body("oldPassword").isLength({ min: 6, max: 20 }),
 
@@ -82,29 +104,34 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { userId } = req.session
+        const { _id } = req
+
         const { oldPassword, newPassword } = req.body
 
-        const user = await fetch("SELECT password FROM blog_users WHERE id = ? LIMIT 1", [userId])
+        const user = await User.findById(_id)
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
-            return res.status(422).json({ message: "Old password does not match" })
+            return res.status(422).json({ error: "Old password does not match" })
         }
 
-        await query("UPDATE blog_users SET password = ? WHERE id = ?", [await bcrypt.hash(newPassword, 10), userId])
+        user.password = await bcrypt.hash(newPassword, 10)
 
-        res.json({ message: "Password changed successfully" })
+        await user.save()
+
+        res.json({ success: "Password changed successfully" })
     }
 )
 
 routes.patch(
-    "/edit-account",
+    "/edit-profile",
 
-    authenticate,
+    isAuthenticated,
 
     body("name")
+        .isString()
         .trim()
-        .isLength({ min: 2, max: 30 }),
+        .notEmpty()
+        .isLength({ max: 30 }),
 
     body("email")
         .trim()
@@ -114,40 +141,36 @@ routes.patch(
     checkValidationError,
 
     async (req, res) => {
-        const { userId } = req.session
-        const { name, email, profileImg } = req.body
+        const { _id } = req
 
-        if (await fetch("SELECT 1 FROM blog_users WHERE email = ? AND id != ? LIMIT 1", [email, userId])) {
-            return res.status(409).json({ message: "Email already taken" })
+        const { name, email } = req.body
+
+        if (await User.findOne({ email, _id: { $ne: _id } })) {
+            return res.status(409).json({ error: "Email already taken" })
         }
 
-        const user = await fetch("SELECT * FROM blog_users WHERE id = ? LIMIT 1", [userId])
+        const user = await User.findById(_id)
 
-        if (profileImg) {
-            const { imgUrl, imgId } = await upload(profileImg)
-            user.profileImgUrl && await destroy(user.profileImgId)
-            user.profileImgUrl = imgUrl
-            user.profileImgId = imgId
-        }
+        user.name = name
 
-        await query("UPDATE blog_users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ? WHERE id = ?", [name, email, user.profileImgUrl, user.profileImgId, userId])
+        user.email = email
 
-        res.json({
-            profileImgUrl: user.profileImgUrl
-        })
+        await user.save()
+
+        user.password = undefined
+
+        res.json(user)
     }
 )
 
 routes.get("/", async (req, res) => {
-    const { userId } = req.session
+    const { _id } = req
 
-    const user = await fetch("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM blog_users WHERE id = ? LIMIT 1", [userId ?? null])
+    const user = await User.findById(_id)
 
-    const csrfToken = crypto.randomUUID()
+    user.password = undefined
 
-    req.session.csrfToken = csrfToken
-
-    res.cookie("X-XSRF-TOKEN", csrfToken).json(user)
+    res.json(user)
 })
 
 export default routes

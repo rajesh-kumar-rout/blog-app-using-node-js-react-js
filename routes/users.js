@@ -1,117 +1,171 @@
 import { Router } from "express"
-import { query, fetch } from "../utils/database.js"
 import { body, param } from "express-validator"
-import { checkValidationError, isBase64Img } from "../utils/validation.js"
-import { upload, destroy } from "../utils/cloudinary.js"
+import Category from "../models/category.js"
+import News from "../models/news.js"
+import { destroy, upload } from "../utils/cloudinary.js"
+import { checkValidationError } from "../utils/validation.js"
 
 const routes = Router()
 
-routes.get("/me/blogs", async (req, res) => {
-    const { userId } = req.session
+routes.get("/me/news", async (req, res) => {
+    const { _id } = req
 
-    const blogs = await query("SELECT blog_blogs.id, blog_blogs.title, LEFT(blog_blogs.content, 100) AS content, blog_blogs.imgUrl, blog_categories.name AS category, blog_blogs.createdAt, blog_blogs.updatedAt FROM blog_blogs INNER JOIN blog_categories ON blog_categories.id = blog_blogs.categoryId WHERE blog_blogs.userId = ? ORDER BY id DESC", [userId])
+    const news = await News.find({ userId: _id }).select({ content: 0 }).sort({ createdAt: -1 })
 
-    res.json(blogs)
+    res.json(news)
 })
 
-routes.get("/me/blogs/:blogId", async (req, res) => {
-    const { blogId } = req.params
+routes.get(
+    "/me/news/:newsId",
 
-    const blog = await fetch("SELECT id, title, content, imgUrl, createdAt, updatedAt, categoryId FROM blog_blogs WHERE id = ? LIMIT 1", [blogId])
-
-    res.json(blog)
-})
-
-routes.post(
-    "/me/blogs",
-
-    body("title").trim().notEmpty().isLength({ max: 255 }),
-
-    body("content").trim().notEmpty().isLength({ max: 5000 }),
-
-    body("categoryId").isInt(),
-
-    body("img").isString().custom(isBase64Img),
+    param("newsId").isMongoId(),
 
     checkValidationError,
 
     async (req, res) => {
-        const { content, title, categoryId, img } = req.body
-        const { userId } = req.session
+        const { newsId } = req.params
 
-        if (!await fetch("SELECT 1 FROM blog_categories WHERE id = ? LIMIT 1", [categoryId])) {
-            return res.status(404).json({ message: "Category not found" })
+        const { _id } = req
+
+        const news = await News.findOne({ userId: newsId, userId: _id })
+
+        res.json(news)
+    }
+)
+
+routes.post(
+    "/me/news",
+
+    body("title")
+        .isString()
+        .trim()
+        .notEmpty()
+        .isLength({ max: 255 }),
+
+    body("content")
+        .isString()
+        .trim()
+        .notEmpty()
+        .isLength({ max: 5000 }),
+
+    body("categoryId").isMongoId(),
+
+    body("image")
+        .isString()
+        .notEmpty(),
+
+    body("isTrending").isBoolean().toBoolean(),
+
+    checkValidationError,
+
+    async (req, res) => {
+        const { content, title, categoryId, image, isTrending } = req.body
+
+        const { _id } = req
+
+        if (!await Category.findById(categoryId)) {
+            return res.status(404).json({ error: "Category not found" })
         }
 
-        const { imgUrl, imgId } = await upload(img)
+        const news = await News.create({
+            title,
+            content,
+            categoryId,
+            userId: _id,
+            isTrending,
+            image: await upload(image)
+        })
 
-        await query("INSERT INTO blog_blogs (title, content, imgUrl, imgId, userId, categoryId) VALUES (?, ?, ?, ?, ?, ?)", [title, content, imgUrl, imgId, userId, categoryId])
-
-        res.status(201).json({ message: "Blog added successfully" })
+        res.status(201).json(news)
     }
 )
 
 routes.patch(
-    "/me/blogs/:blogId",
+    "/me/news/:newsId",
 
-    param("blogId").isInt(),
+    param("newsId").isMongoId(),
 
-    body("categoryId").isInt(),
-
-    body("title").trim().isLength({ max: 255 }),
-
-    body("content").trim().isLength({ max: 5000 }),
-
-    body("img")
-        .optional()
+    body("title")
         .isString()
-        .custom(isBase64Img),
+        .trim()
+        .notEmpty()
+        .isLength({ max: 255 }),
+
+    body("content")
+        .isString()
+        .trim()
+        .notEmpty()
+        .isLength({ max: 5000 }),
+
+    body("categoryId").isMongoId(),
+
+    body("image").isString(),
+
+    body("isTrending").isBoolean().toBoolean(),
 
     checkValidationError,
 
     async (req, res) => {
-        const { content, title, categoryId, img } = req.body
-        const { blogId } = req.params
-        const { userId } = req.session
+        const { content, title, categoryId, image, isTrending } = req.body
 
-        if (!await fetch("SELECT 1 FROM blog_categories WHERE id = ? LIMIT 1", [categoryId])) {
-            return res.status(404).json({ message: "Category not found" })
+        const { newsId } = req.params
+
+        const { _id } = req
+
+        if (!await Category.findById(categoryId)) {
+            return res.status(404).json({ error: "Category not found" })
         }
 
-        const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, userId])
+        const news = await News.findOne({ userId: _id, _id: newsId })
 
-        if (!blog) {
-            return res.status(404).json({ message: "Blog not found" })
+        if (!news) {
+            return res.status(404).json({ error: "News not found" })
         }
 
-        if (img) {
-            blog.imgId && (await destroy(blog.imgId))
-            const { imgUrl, imgId } = await upload(img)
-            blog.imgUrl = imgUrl
-            blog.imgId = imgId
+        news.title = title
+
+        news.content = content
+
+        news.categoryId = categoryId
+
+        news.isTrending = isTrending
+
+        if (image) {
+            await destroy(news.image.id)
+
+            news.image = await upload(image)
         }
 
-        await query("UPDATE blog_blogs SET title = ?, content = ?, imgUrl = ?, imgId = ?, categoryId = ? WHERE id = ?", [title, content, blog.imgUrl, blog.imgId, categoryId, blogId])
+        await news.save()
 
-        res.status(201).json({ message: "Blog updated successfully" })
+        res.json(news)
     }
 )
 
-routes.delete("/me/blogs/:blogId", async (req, res) => {
-    const { blogId } = req.params
-    const { userId } = req.session
+routes.delete(
+    "/me/news/:newsId",
 
-    const blog = await fetch("SELECT * FROM blog_blogs WHERE id = ? AND userId = ? LIMIT 1", [blogId, userId])
+    param("newsId").isMongoId(),
 
-    if (!blog) {
-        return res.status(404).json({ message: "Blog not found" })
+    checkValidationError,
+
+    async (req, res) => {
+        const { newsId } = req.params
+
+        const { _id } = req
+
+        const news = await News.findOne({ userId: _id, _id: newsId })
+
+        if (!news) {
+            return res.status(404).json({ error: "News not found" })
+        }
+
+        await destroy(news.image.id)
+
+        await news.delete()
+
+        res.json(news)
     }
-
-    blog.imgUrl && await destroy(blog.imgId)
-
-    await query("DELETE FROM blog_blogs WHERE id = ? AND userId = ?", [blogId, userId])
-
-    res.json({ message: "Blog deleted successfully" })
-})
+)
 
 export default routes

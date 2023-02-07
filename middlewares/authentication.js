@@ -1,18 +1,42 @@
-import { config } from "dotenv"
+import dotenv from "dotenv"
+import jwt from "jsonwebtoken"
 
-config()
+dotenv.config()
 
 export function authenticate(req, res, next) {
-    if (!req.session.userId) {
-        return res.status(401).json({ message: "Unauthorized" })
+    
+    const bearerToken = req.headers.authorization
+
+    const authToken = bearerToken && bearerToken.startsWith("Bearer ") ? bearerToken.substring(7, bearerToken.length) : null 
+
+    try {
+        
+        const { _id, isAdmin } = jwt.verify(authToken, process.env.AUTH_TOKEN_SECRECT)
+
+        req._id = _id 
+
+        req.isAdmin = isAdmin
+
+    } catch {
+        
     }
 
     next()
 }
 
-export async function verifyCsrf(req, res, next) {
-    if (req.method !== "GET" && req.headers['x-xsrf-token'] !== req.session.csrfToken) {
-        return res.status(403).json({ message: "Access denied" })
+export function isAuthenticated(req, res, next) {
+
+    if (!req._id) {
+        return res.status(401).json({ error: "Authentication failed" })
+    }
+
+    next()
+}
+
+export function isAdmin(req, res, next) {
+
+    if (!req.isAdmin) {
+        return res.status(401).json({ error: "Access denied" })
     }
 
     next()
