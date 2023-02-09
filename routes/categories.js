@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { param } from "express-validator"
 import Category from "../models/category.js"
-import News from "../models/news.js"
+import Post from "../models/post.js"
 import { checkValidationError } from "../utils/validation.js"
 import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
 import { body } from "express-validator"
@@ -14,7 +14,7 @@ routes.get("/", async (req, res) => {
 })
 
 routes.get(
-    "/:categoryId/news",
+    "/:categoryId/posts",
 
     param("categoryId").isMongoId(),
 
@@ -25,9 +25,9 @@ routes.get(
 
         const { limit } = req.query
 
-        const news = await News.find({ categoryId }).limit(limit).sort({ createdAt: -1 })
+        const post = await Post.find({ categoryId }).limit(limit).sort({ createdAt: -1 })
 
-        res.json(news)
+        res.json(post)
     }
 )
 
@@ -121,13 +121,13 @@ routes.delete(
             return res.status(404).json({ error: "Category not found" })
         }
 
-        const news = await News.find({ categoryId })
+        const posts = await Post.find({ categoryId })
 
-        for (const newsItem in news) {
-            await destroy(news.image.id)
+        for (const postItem in posts) {
+            await destroy(postItem.image.id)
         }
 
-        await News.deleteMany({ categoryId })
+        await Post.deleteMany({ categoryId })
 
         await category.delete()
 

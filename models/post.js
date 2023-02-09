@@ -14,11 +14,9 @@ const schema = new Schema(
 
         image: imageSchema,
 
-        userId: Schema.Types.ObjectId,
+        authorId: Schema.Types.ObjectId,
 
         categoryId: Schema.Types.ObjectId,
-
-        isTrending: Boolean,
 
         isApproved: { type: Boolean, default: false }
     },
@@ -27,4 +25,4 @@ const schema = new Schema(
     }
 )
 
-export default mongoose.model("News", schema)
+export default mongoose.model("Post", schema)

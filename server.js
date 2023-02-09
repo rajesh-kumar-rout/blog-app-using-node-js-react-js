@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import express from "express"
 import { authenticate, isAuthenticated } from "./middlewares/authentication.js"
 import authRoutes from "./routes/auth.js"
-import newsRoutes from "./routes/news.js"
+import postsRoutes from "./routes/posts.js"
 import categoriesRoutes from "./routes/categories.js"
 import usersRoutes from "./routes/users.js"
 import mongoose from "mongoose"
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(authenticate)
 
 app.use("/api/auth", authRoutes)
-app.use("/api/news", newsRoutes)
+app.use("/api/posts", postsRoutes)
 app.use("/api/users", isAuthenticated, usersRoutes)
 app.use("/api/categories", categoriesRoutes)
 

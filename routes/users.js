@@ -1,40 +1,40 @@
 import { Router } from "express"
 import { body, param } from "express-validator"
 import Category from "../models/category.js"
-import News from "../models/news.js"
+import Post from "../models/post.js"
 import { destroy, upload } from "../utils/cloudinary.js"
 import { checkValidationError } from "../utils/validation.js"
 
 const routes = Router()
 
-routes.get("/me/news", async (req, res) => {
+routes.get("/me/posts", async (req, res) => {
     const { _id } = req
 
-    const news = await News.find({ userId: _id }).select({ content: 0 }).sort({ createdAt: -1 })
+    const posts = await Post.find({ userId: _id }).select({ content: 0 }).sort({ createdAt: -1 })
 
-    res.json(news)
+    res.json(posts)
 })
 
 routes.get(
-    "/me/news/:newsId",
+    "/me/posts/:postId",
 
-    param("newsId").isMongoId(),
+    param("postId").isMongoId(),
 
     checkValidationError,
 
     async (req, res) => {
-        const { newsId } = req.params
+        const { postId } = req.params
 
         const { _id } = req
 
-        const news = await News.findOne({ userId: newsId, userId: _id })
+        const post = await Post.findOne({ userId: _id, _id: postId })
 
-        res.json(news)
+        res.json(post)
     }
 )
 
 routes.post(
-    "/me/news",
+    "/me/posts",
 
     body("title")
         .isString()
@@ -54,8 +54,6 @@ routes.post(
         .isString()
         .notEmpty(),
 
-    body("isTrending").isBoolean().toBoolean(),
-
     checkValidationError,
 
     async (req, res) => {
@@ -67,23 +65,22 @@ routes.post(
             return res.status(404).json({ error: "Category not found" })
         }
 
-        const news = await News.create({
+        const post = await Post.create({
             title,
             content,
             categoryId,
-            userId: _id,
-            isTrending,
+            authorId: _id,
             image: await upload(image)
         })
 
-        res.status(201).json(news)
+        res.status(201).json(post)
     }
 )
 
 routes.patch(
-    "/me/news/:newsId",
+    "/me/posts/:postId",
 
-    param("newsId").isMongoId(),
+    param("postId").isMongoId(),
 
     body("title")
         .isString()
@@ -101,14 +98,12 @@ routes.patch(
 
     body("image").isString(),
 
-    body("isTrending").isBoolean().toBoolean(),
-
     checkValidationError,
 
     async (req, res) => {
         const { content, title, categoryId, image, isTrending } = req.body
 
-        const { newsId } = req.params
+        const { postId } = req.params
 
         const { _id } = req
 
@@ -116,55 +111,53 @@ routes.patch(
             return res.status(404).json({ error: "Category not found" })
         }
 
-        const news = await News.findOne({ userId: _id, _id: newsId })
+        const post = await Post.findOne({ userId: _id, _id: postId })
 
-        if (!news) {
-            return res.status(404).json({ error: "News not found" })
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" })
         }
 
-        news.title = title
+        post.title = title
 
-        news.content = content
+        post.content = content
 
-        news.categoryId = categoryId
-
-        news.isTrending = isTrending
+        post.categoryId = categoryId
 
         if (image) {
-            await destroy(news.image.id)
+            await destroy(post.image.id)
 
-            news.image = await upload(image)
+            post.image = await upload(image)
         }
 
-        await news.save()
+        await post.save()
 
-        res.json(news)
+        res.json(post)
     }
 )
 
 routes.delete(
-    "/me/news/:newsId",
+    "/me/posts/:postId",
 
-    param("newsId").isMongoId(),
+    param("postId").isMongoId(),
 
     checkValidationError,
 
     async (req, res) => {
-        const { newsId } = req.params
+        const { postId } = req.params
 
         const { _id } = req
 
-        const news = await News.findOne({ userId: _id, _id: newsId })
+        const post = await Post.findOne({ userId: _id, _id: postId })
 
-        if (!news) {
-            return res.status(404).json({ error: "News not found" })
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" })
         }
 
-        await destroy(news.image.id)
+        await destroy(post.image.id)
 
-        await news.delete()
+        await post.delete()
 
-        res.json(news)
+        res.json(post)
     }
 )
 
