@@ -1,10 +1,10 @@
-import { Link, useNavigate } from "react-router-dom"
-import { Formik, Field, ErrorMessage, Form } from "formik"
-import { object, string, ref } from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
+import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
-import axios from "../../utils/axios"
-import form from "../../styles/Form.module.css"
+import { object, ref, string } from "yup"
 import button from "../../styles/Button.module.css"
+import form from "../../styles/Form.module.css"
+import axios from "../../utils/axios"
 
 const validationSchema = object().shape({
     name: string()
@@ -34,8 +34,8 @@ export default function SignUpPage() {
         setSubmitting(true)
 
         try {
-            const { data } = await axios.post("/auth/sign-up", values)
-            localStorage.setItem("jwtToken", data.jwtToken)
+            const { data } = await axios.post("/auth/register", values)
+            localStorage.setItem("authToken", data.authToken)
             window.location.href = "/"
         } catch ({ response }) {
             response?.status === 409 && toast.error("Email already taken")

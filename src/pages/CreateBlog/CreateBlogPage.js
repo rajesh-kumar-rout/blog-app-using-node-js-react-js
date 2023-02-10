@@ -14,7 +14,7 @@ const validationSchema = object().shape({
         .max(255, "Title must be within 255 characters")
         .required("Title is required"),
 
-    categoryId: number().required("Category is required"),
+    categoryId: string().required("Category is required"),
 
     content: string()
         .trim()
@@ -35,15 +35,15 @@ export default function CreateBlogPage() {
     }
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        values.img && (values.img = await getBase64Img(values.img))
         setSubmitting(true)
 
         try {
-            await axios.post("/account/blogs", values)
+            await axios.post("/users/me/posts", values)
             toast.success("Blog created successfully")
             resetForm()
             imgRef.current.value = ""
         } catch ({ response }) {
+            console.log(response.data);
             response?.status === 409 && toast.error("Title already exists")
         }
 
@@ -54,7 +54,7 @@ export default function CreateBlogPage() {
         fetchCategories()
     }, [])
 
-    if(isFetching) {
+    if (isFetching) {
         return <div>Loading...</div>
     }
 
@@ -63,14 +63,15 @@ export default function CreateBlogPage() {
             initialValues={{
                 title: "",
                 categoryId: "",
-                img: "",
+                image: "",
                 content: ""
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
         >
-            {({ isSubmitting, setFieldValue }) => (
+            {({ isSubmitting, setFieldValue, errors }) => (
                 <Form className={form.form}>
+                    {JSON.stringify(errors)}
                     <div className={form.header}>Create New Blog</div>
 
                     <div className={form.body}>
@@ -91,26 +92,33 @@ export default function CreateBlogPage() {
                                 type="file"
                                 id="img"
                                 className={form.textInput}
-                                onChange={event => setFieldValue("img", event.target.files[0])}
-                                accept="image/png, image/jpeg, image/jpg"
+                                onChange={event => {
+                                    const reader = new FileReader()
+
+                                    reader.readAsDataURL(event.target.files[0])
+                                    reader.onload = () => {
+                                        setFieldValue("image", reader.result)
+                                    }
+                                }}
+                                accept=".png, .jpeg, .jpg"
                                 required
                                 ref={imgRef}
                             />
                         </div>
 
                         <div className={form.group}>
-                            <label htmlFor="category" className={form.textLabel}>Category</label>
-                            <Field 
+                            <label htmlFor="categoryId" className={form.textLabel}>Category</label>
+                            <Field
                                 className={form.textInput}
                                 name="categoryId"
                                 as="select"
                             >
                                 <option></option>
                                 {categories.map(category => (
-                                    <option value={category.id}>{category.name}</option>
+                                    <option value={category._id}>{category.name}</option>
                                 ))}
                             </Field>
-                            <ErrorMessage name="category" component="p" className={form.errorText} />
+                            <ErrorMessage name="categoryId" component="p" className={form.errorText} />
                         </div>
 
                         <div className={form.group}>

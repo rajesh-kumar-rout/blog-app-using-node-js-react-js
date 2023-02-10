@@ -1,12 +1,11 @@
-import { Formik, Field, ErrorMessage, Form } from "formik"
-import { object, string } from "yup"
-import { getBase64Img } from "../../utils/functions"
-import { toast } from "react-toastify"
-import axios from "../../utils/axios"
-import form from "../../styles/Form.module.css"
-import button from "../../styles/Button.module.css"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useContext } from "react"
-import { AccountContext } from "../../components/Account"
+import { toast } from "react-toastify"
+import { object, string } from "yup"
+import { AuthContext } from "../../components/Auth"
+import button from "../../styles/Button.module.css"
+import form from "../../styles/Form.module.css"
+import axios from "../../utils/axios"
 
 const validationSchema = object().shape({
     name: string()
@@ -23,19 +22,19 @@ const validationSchema = object().shape({
 })
 
 export default function EditAccountPage() {
-    const { account, setAccount } = useContext(AccountContext)
+    const { currentUser, setCurrentUser } = useContext(AuthContext)
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        values.profileImg && (values.profileImg = await getBase64Img(values.profileImg))
         setSubmitting(true)
 
         try {
-            const { data } = await axios.patch("/auth/edit-account", values)
-            setAccount({
-                ...account,
+            const { data } = await axios.patch("/auth/edit-profile", values)
+            console.log(data);
+            setCurrentUser({
+                ...currentUser,
                 name: values.name,
                 email: values.email,
-                profileImgUrl: data.profileImgUrl
+                profileImage: data.profileImage
             })
             toast.success("Account edited successfully")
         } catch ({ response }) {
@@ -48,9 +47,9 @@ export default function EditAccountPage() {
     return (
         <Formik
             initialValues={{
-                name:account.name,
-                email: account.email,
-                profileImg: ""
+                name:currentUser.name,
+                email: currentUser.email,
+                profileImage: ""
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -89,7 +88,14 @@ export default function EditAccountPage() {
                                 id="profileImg"
                                 className={form.textInput}
                                 name="profileImg"
-                                onChange={event => setFieldValue("profileImg", event.target.files[0])}
+                                onChange={event => {
+                                    const reader = new FileReader()
+
+                                    reader.readAsDataURL(event.target.files[0])
+                                    reader.onload = () => {
+                                        setFieldValue("profileImage", reader.result)
+                                    }
+                                }}
                                 accept="image/jpeg, image/png, image/jpg"
                             />
                         </div>

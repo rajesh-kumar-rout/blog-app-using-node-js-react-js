@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import BlogDetails from "../../components/PostDetails/PostDetails";
 import RelatedBlog from "../../components/RelatedPost/RelatedPost";
 import styles from "./blogDetailsPage.module.css"
@@ -13,15 +13,17 @@ export default function BlogDetailsPage() {
     const [isFetching, setIsFetching] = useState(true)
 
     const fetchBlogDetails = async () => {
-        const { data } = await axios.get(`/blogs/${postId}`)
-        setBlog(data.blog)
-        setRelatedBlogs(data.relatedBlogs)
+        setIsFetching(true)
+        const { data } = await axios.get(`/posts/${postId}`)
+        console.log(data);
+        setBlog(data.post)
+        setRelatedBlogs(data.relatedPosts)
         setIsFetching(false)
     }
 
     useEffect(() => {
         fetchBlogDetails()
-    }, [])
+    }, [postId])
 
     if(isFetching){
         return <div>Loading...</div>

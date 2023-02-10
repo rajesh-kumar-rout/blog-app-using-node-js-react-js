@@ -1,9 +1,9 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import { Formik, Field, ErrorMessage, Form } from "formik"
-import { object, string } from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
+import { Link, useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
-import form from "../../styles/Form.module.css"
+import { object, string } from "yup"
 import button from "../../styles/Button.module.css"
+import form from "../../styles/Form.module.css"
 import axios from "../../utils/axios"
 
 const validationSchema = object().shape({
@@ -20,7 +20,7 @@ export default function LoginPage() {
 
         try {
             const { data } = await axios.post("/auth/login", values)
-            localStorage.setItem("jwtToken", data.jwtToken)
+            localStorage.setItem("authToken", data.authToken)
             window.location.href = searchParams.get("return") ? searchParams.get("return") : "/"
         } catch ({ response }) {
             response?.status === 422 && toast.error("Invalid email or password")
@@ -77,7 +77,7 @@ export default function LoginPage() {
                             </button>
                         </div>
 
-                        <p className={form.formLink}>Do not have an account ? <Link to="/account/sign-up">Sign Up</Link></p>
+                        <p className={form.formLink}>Do not have an account ? <Link to="/register">Sign Up</Link></p>
                     </div>
                 </Form>
             )}

@@ -1,12 +1,37 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { createContext, useEffect, useState } from "react"
+import axios from "../utils/axios"
+import Loader from "./Loader/Loader"
 
-export function Authenticated() {
-    const { pathname, search } = useLocation()
-    const destination = pathname + search
+export const AuthContext = createContext()
 
-    return localStorage.getItem("jwtToken") ? <Outlet/> : <Navigate to={`/account/login?return=${destination}`} replace />
-}
+export default function Auth({ children }) {
+    const [isFetching, setIsFetching] = useState(true)
+    const [currentUser, setCurrentUser] = useState()
 
-export function NotAuthenticated() {
-    return localStorage.getItem("jwtToken") ? <Navigate to="/" replace /> : <Outlet/>
+    const fetchCurrentUser = async () => {
+        const { data } = await axios.get("/auth")
+        setCurrentUser(data)
+        setIsFetching(false)
+    }
+
+    useEffect(() => {
+        fetchCurrentUser()
+    }, [])
+
+    if (isFetching) {
+        return <Loader/>
+    }
+
+    return (
+        <AuthContext.Provider
+            value={{
+                setCurrentUser,
+                currentUser,
+                setIsFetching,
+                isFetching
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    )
 }

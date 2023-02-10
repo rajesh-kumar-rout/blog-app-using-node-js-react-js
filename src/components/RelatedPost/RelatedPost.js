@@ -3,8 +3,8 @@ import styles from "./RelatedPost.module.css"
 
 export default function RelatedBlog({ blog }) {
     return (
-        <Link to={`/blogs/${blog.id}`} className={styles.container}>
-            <img src={blog.imgUrl}/>
+        <Link to={`/posts/${blog._id}`} className={styles.container}>
+            <img src={blog.image.url}/>
             <p className={styles.title}>{blog.title}</p>
         </Link>
     )

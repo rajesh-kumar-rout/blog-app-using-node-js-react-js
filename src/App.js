@@ -1,40 +1,45 @@
-import { Routes, Route } from "react-router-dom"
-import { Authenticated, NotAuthenticated } from "./components/Auth"
+import { Route, Routes } from "react-router-dom"
+import Admin from "./components/Admin"
+import Auth from "./components/Auth"
+import Authenticated from "./components/Authenticated"
 import Layout from "./components/Layout/Layout"
-import ChangePasswordPage from "./pages/ChangePassword/ChangePasswordPage"
-import EditAccountPage from "./pages/EditAccount/EditAccountPage"
-import LoginPage from "./pages/Login/LoginPage"
-import SignUpPage from "./pages/SignUp/SignUpPage"
-import HomePage from "./pages/Home/HomePage"
+import UnAuthenticated from "./components/UnAuthenticated"
 import BlogDetailsPage from "./pages/BlogDetails/BlogDetailsPage"
 import BlogsPage from "./pages/Blogs/BlogsPage"
+import ChangePasswordPage from "./pages/ChangePassword/ChangePasswordPage"
 import CreateBlogPage from "./pages/CreateBlog/CreateBlogPage"
+import EditAccountPage from "./pages/EditAccount/EditAccountPage"
 import EditBlogPage from "./pages/EditBlog/EditBlogPage"
-import Account from "./components/Account"
+import HomePage from "./pages/Home/HomePage"
+import LoginPage from "./pages/Login/LoginPage"
+import SignUpPage from "./pages/SignUp/SignUpPage"
+import UnApprovePage from "./pages/UnApprove/UnApprovePage"
 
 export default function App() {
     return (
-        <Account>
+        <Auth>
             <Routes>
                 <Route element={<Layout />}>
                     <Route index element={<HomePage />} />
-                    <Route path="/blogs/:postId" element={<BlogDetailsPage />} />
+                    <Route path="/posts/:postId" element={<BlogDetailsPage />} />
 
                     <Route element={<Authenticated />}>
-                        <Route path="/account/change-password" element={<ChangePasswordPage />} />
-                        <Route path="/account/edit-account" element={<EditAccountPage />} />
-
-                        <Route path="/account/blogs/create" element={<CreateBlogPage />} />
-                        <Route path="/account/blogs/:blogId/edit" element={<EditBlogPage />} />
-                        <Route path="/account/blogs" element={<BlogsPage />} />
+                        <Route path="/change-password" element={<ChangePasswordPage />} />
+                        <Route path="/edit-profile" element={<EditAccountPage />} />
+                        <Route path="/create-post" element={<CreateBlogPage />} />
+                        <Route path="/edit-post/:postId" element={<EditBlogPage />} />
+                        <Route path="/posts" element={<BlogsPage />} />
+                        <Route element={<Admin/>}>
+                        <Route path="/unapproved-posts" element={<UnApprovePage />} />
+                        </Route>
                     </Route>
 
-                    <Route element={<NotAuthenticated />}>
-                        <Route path="/account/login" element={<LoginPage />} />
-                        <Route path="/account/sign-up" element={<SignUpPage />} />
+                    <Route element={<UnAuthenticated />}>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<SignUpPage />} />
                     </Route>
                 </Route>
             </Routes>
-        </Account>
+        </Auth>
     )
 }

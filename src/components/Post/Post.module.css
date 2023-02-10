@@ -19,8 +19,7 @@
 }
 
 .title {
-    font-size: 18px;
-    transition: all 300ms;
+    font-size: 20px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -31,7 +30,7 @@
 
 .content {
     color: var(--gray600);
-    margin-top: 10px;
+    margin-top: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

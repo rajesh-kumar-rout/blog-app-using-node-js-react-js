@@ -4,25 +4,25 @@ import { posts } from "../../utils/faker"
 import axios from "../../utils/axios"
 
 export default function HomePage() {
-    const [blogs, setBlogs] = useState([])
+    const [posts, setPosts] = useState([])
     const [isFetching, setIsFetching] = useState(true)
 
-    const fetchBlogs = async () => {
-        const { data } = await axios.get("/blogs")
-        setBlogs(data)
+    const fetchPosts = async () => {
+        const { data } = await axios.get("/posts")
+        setPosts(data)
         setIsFetching(false)
     }
 
     useEffect(() => {
-        fetchBlogs()
+        fetchPosts()
     }, [])
 
     return (
         <div>
-            {blogs.map(blog => (
+            {posts.map(post => (
                 <Post
-                    key={blog.id}
-                    blog={blog}
+                    key={post.id}
+                    blog={post}
                 />
             ))}
         </div>
