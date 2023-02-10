@@ -10,7 +10,7 @@ const routes = Router()
 routes.get("/me/posts", async (req, res) => {
     const { _id } = req
 
-    const posts = await Post.find({ userId: _id }).select({ content: 0 }).sort({ createdAt: -1 })
+    const posts = await Post.find({ authorId: _id }).select({ content: 0 }).sort({ createdAt: -1 })
 
     res.json(posts)
 })
@@ -59,7 +59,7 @@ routes.post(
     async (req, res) => {
         const { content, title, categoryId, image, isTrending } = req.body
 
-        const { _id } = req
+        const { _id, isAdmin } = req
 
         if (!await Category.findById(categoryId)) {
             return res.status(404).json({ error: "Category not found" })
@@ -70,6 +70,7 @@ routes.post(
             content,
             categoryId,
             authorId: _id,
+            isApproved: isAdmin,
             image: await upload(image)
         })
 

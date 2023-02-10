@@ -6,6 +6,7 @@ import User from "../models/user.js"
 import { checkValidationError } from "../utils/validation.js"
 import dotenv from "dotenv"
 import { isAuthenticated } from "../middlewares/authentication.js"
+import { destroy, upload } from "../utils/cloudinary.js"
 
 dotenv.config()
 
@@ -63,17 +64,23 @@ routes.post(
     checkValidationError,
 
     async (req, res) => {
-        const { name, email, password } = req.body
+        const { name, email, password, profileImage } = req.body
 
         if (await User.findOne({ email })) {
             return res.status(409).json({ error: "Email already taken" })
         }
 
-        const user = await User.create({
+        const user = new User({
             name,
             email,
             password: await bcrypt.hash(password, 10)
         })
+
+        if(profileImage){
+            user.profileImage = await upload(profileImage)
+        }
+
+        await user.save()
 
         user.password = undefined
 
@@ -143,7 +150,7 @@ routes.patch(
     async (req, res) => {
         const { _id } = req
 
-        const { name, email } = req.body
+        const { name, email, profileImage } = req.body
 
         if (await User.findOne({ email, _id: { $ne: _id } })) {
             return res.status(409).json({ error: "Email already taken" })
@@ -154,6 +161,13 @@ routes.patch(
         user.name = name
 
         user.email = email
+
+        if(profileImage) {
+
+            user.profileImage && await destroy(user.profileImage.id)
+
+            user.profileImage = await upload(profileImage)
+        }
 
         await user.save()
 
@@ -168,7 +182,9 @@ routes.get("/", async (req, res) => {
 
     const user = await User.findById(_id)
 
-    user.password = undefined
+    if(user){
+        user.password = undefined
+    }
 
     res.json(user)
 })

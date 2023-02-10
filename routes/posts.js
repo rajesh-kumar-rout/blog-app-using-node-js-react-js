@@ -13,6 +13,39 @@ routes.get("/", async (req, res) => {
     res.json(news)
 })
 
+
+routes.get("/unapproved", isAdmin, async (req, res) => {
+    const posts = await Post.aggregate([
+        {
+            $match: {
+                isApproved: false
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "authorId",
+                as: "author",
+                pipeline: [
+                    {
+                        $project: {
+                            name: 1,
+                            profileImage: { url: 1 }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $unwind: "$author"
+        }
+    ])
+
+    res.json(posts)
+})
+
+
 routes.get(
     "/:postId",
 
@@ -25,23 +58,19 @@ routes.get(
 
         let post = await Post.findById(postId)
 
-        if(!post){
-            return res.status(404).json({error: "Post not found"})
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" })
         }
 
         post = post.toObject()
 
-        post.author = await User.findOne({_id: post.authorId}).select({password: 0})
+        post.author = await User.findOne({ _id: post.authorId }).select({ password: 0 })
 
-        res.json(post)
+        const relatedPosts = await Post.find({ categoryId: post.categoryId, _id: { $ne: post._id } })
+
+        res.json({ post, relatedPosts })
     }
 )
-
-routes.get("/:unapproved", async (req, res) => {
-    const posts = await Post.find({ isApproved: false })
-
-    res.json(posts)
-})
 
 routes.patch(
     "/:postId/approve",

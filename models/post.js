@@ -1,10 +1,5 @@
 import mongoose, { Schema } from "mongoose"
-
-const imageSchema = new Schema({
-    url: String,
-
-    id: String
-})
+import imageSchema from "./image.js"
 
 const schema = new Schema(
     {

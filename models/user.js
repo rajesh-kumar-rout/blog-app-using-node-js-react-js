@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose"
+import imageSchema from "./image.js"
 
 const schema = new Schema({
     name: String,
@@ -6,6 +7,8 @@ const schema = new Schema({
     email: String,
 
     password: String,
+
+    profileImage: imageSchema,
 
     isAdmin: {type: Boolean, default: false}
 })
