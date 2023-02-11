@@ -1,10 +1,8 @@
 
-import { Formik, Field, ErrorMessage, Form } from "formik"
-import { object, string, ref } from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { toast } from "react-toastify"
+import { object, ref, string } from "yup"
 import axios from "../../utils/axios"
-import form from "../../styles/Form.module.css"
-import button from "../../styles/Button.module.css"
 
 const validationSchema = object().shape({
     oldPassword: string()
@@ -23,14 +21,19 @@ const validationSchema = object().shape({
 })
 
 export default function ChangePasswordPage() {
+
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setSubmitting(true)
 
         try {
             await axios.patch("/auth/change-password", values)
+
             toast.success("Password changed successfully")
+
             resetForm()
+
         } catch ({ response }) {
+            
             response?.status === 422 && toast.error("Old password does not match")
         }
 
@@ -48,47 +51,45 @@ export default function ChangePasswordPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <Form className={form.form}>
-                    <h2 className={form.header}>Change Password</h2>
+                <Form className="card mx-auto max-w-600">
+                    <h2 className="card-header card-title">Change Password</h2>
 
-                    <div className={form.body}>
-                        <div className={form.group}>
-                            <label htmlFor="oldPassword" className={form.textLabel}>Old Password</label>
+                    <div className="card-body">
+                        <div className="mb-5">
+                            <label htmlFor="oldPassword" className="form-label">Old Password</label>
                             <Field
                                 type="password"
                                 id="oldPassword"
-                                className={form.textInput}
+                                className="form-control"
                                 name="oldPassword"
                             />
-                            <ErrorMessage name="oldPassword" component="p" className={form.errorText} />
+                            <ErrorMessage name="oldPassword" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="newPassword" className={form.textLabel}>New Password</label>
+                        <div className="mb-5">
+                            <label htmlFor="newPassword" className="form-label">New Password</label>
                             <Field
                                 type="password"
                                 id="newPassword"
-                                className={form.textInput}
+                                className="form-control"
                                 name="newPassword"
                             />
-                            <ErrorMessage name="newPassword" component="p" className={form.errorText} />
+                            <ErrorMessage name="newPassword" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="confirmNewPassword" className={form.textLabel}>Confirm New Password</label>
+                        <div className="mb-5">
+                            <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
                             <Field
                                 type="password"
                                 id="confirmNewPassword"
-                                className={form.textInput}
+                                className="form-control"
                                 name="confirmNewPassword"
                             />
-                            <ErrorMessage name="confirmNewPassword" component="p" className={form.errorText} />
+                            <ErrorMessage name="confirmNewPassword" component="p" className="form-error" />
                         </div>
 
                         <button
-                            className={button.btn}
-                            data-primary
-                            data-full
+                            className="btn btn-primary w-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Change Password"}

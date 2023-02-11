@@ -15,14 +15,18 @@ const validationSchema = object().shape({
 export default function LoginPage() {
     const [searchParams] = useSearchParams()
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
 
         try {
             const { data } = await axios.post("/auth/login", values)
+
             localStorage.setItem("authToken", data.authToken)
+
             window.location.href = searchParams.get("return") ? searchParams.get("return") : "/"
+
         } catch ({ response }) {
+
             response?.status === 422 && toast.error("Invalid email or password")
         }
 
@@ -39,45 +43,43 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <Form className={form.form}>
-                    <div className={form.header}>LOGIN</div>
+                <Form className="card max-w-500 mx-auto">
+                    <div className="card-header card-title">Login</div>
 
-                    <div className={form.body}>
-                        <div className={form.group}>
-                            <label htmlFor="email" className={form.textLabel}>Email</label>
+                    <div className="card-body">
+                        <div className="mb-5">
+                            <label htmlFor="email" className="form-label">Email</label>
                             <Field
                                 type="email"
                                 id="email"
-                                className={form.textInput}
+                                className="form-control"
                                 name="email"
                             />
-                            <ErrorMessage name="email" component="p" className={form.errorText} />
+                            <ErrorMessage name="email" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="password" className={form.textLabel}>Password</label>
+                        <div className="mb-5">
+                            <label htmlFor="password" className="form-label">Password</label>
                             <Field
                                 type="password"
                                 id="password"
-                                className={form.textInput}
+                                className="form-control"
                                 name="password"
                             />
-                            <ErrorMessage name="password" component="p" className={form.errorText} />
+                            <ErrorMessage name="password" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
+                        <div className="mb-5">
                             <button
                                 type="submit"
-                                className={button.btn}
-                                data-full
-                                data-primary
+                                className="btn btn-primary w-full"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Loading..." : "Login"}
                             </button>
                         </div>
 
-                        <p className={form.formLink}>Do not have an account ? <Link to="/register">Sign Up</Link></p>
+                        <p className="text-center">Do not have an account ? <Link className="text-underline" to="/register">Register</Link></p>
                     </div>
                 </Form>
             )}

@@ -69,29 +69,28 @@ export default function CreateBlogPage() {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
         >
-            {({ isSubmitting, setFieldValue, errors }) => (
-                <Form className={form.form}>
-                    {JSON.stringify(errors)}
-                    <div className={form.header}>Create New Blog</div>
+            {({ isSubmitting, setFieldValue }) => (
+                <Form className="card max-w-600 mx-auto">
+                    <div className="card-header card-title">Create New Blog</div>
 
-                    <div className={form.body}>
-                        <div className={form.group}>
-                            <label htmlFor="title" className={form.textLabel}>Title</label>
+                    <div className="card-body">
+                        <div className="mb-5">
+                            <label htmlFor="title" className="form-label">Title</label>
                             <Field
                                 type="text"
                                 id="title"
-                                className={form.textInput}
+                                className="form-control"
                                 name="title"
                             />
-                            <ErrorMessage name="title" component="p" className={form.errorText} />
+                            <ErrorMessage name="title" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="img" className={form.textLabel}>Image</label>
+                        <div className="mb-5">
+                            <label htmlFor="img" className="form-label">Image</label>
                             <input
                                 type="file"
                                 id="img"
-                                className={form.textInput}
+                                className="form-control"
                                 onChange={event => {
                                     const reader = new FileReader()
 
@@ -106,10 +105,10 @@ export default function CreateBlogPage() {
                             />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="categoryId" className={form.textLabel}>Category</label>
+                        <div className="mb-5">
+                            <label htmlFor="categoryId" className="form-label">Category</label>
                             <Field
-                                className={form.textInput}
+                                className="form-control"
                                 name="categoryId"
                                 as="select"
                             >
@@ -118,25 +117,23 @@ export default function CreateBlogPage() {
                                     <option value={category._id}>{category.name}</option>
                                 ))}
                             </Field>
-                            <ErrorMessage name="categoryId" component="p" className={form.errorText} />
+                            <ErrorMessage name="categoryId" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="content" className={form.textLabel}>Content</label>
+                        <div className="mb-5">
+                            <label htmlFor="content" className="form-label">Content</label>
                             <Field
                                 id="content"
-                                className={form.textInput}
+                                className="form-control"
                                 name="content"
                                 as="textarea"
                             />
-                            <ErrorMessage name="content" component="p" className={form.errorText} />
+                            <ErrorMessage name="content" component="p" className="form-error" />
                         </div>
 
                         <button
                             type="submit"
-                            className={button.btn}
-                            data-primary
-                            data-full
+                            className="btn btn-primary w-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Save"}

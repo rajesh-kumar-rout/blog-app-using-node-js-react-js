@@ -1,47 +1,52 @@
-import { MdEdit, MdDelete, MdDoneOutline, MdClose } from "react-icons/md"
-import { Link } from "react-router-dom"
-import { posts } from "../../utils/faker"
-import table from "../../styles/Table.module.css"
-import button from "../../styles/Button.module.css"
-import styles from "./blogsPage.module.css"
 import { useEffect, useState } from "react"
+import { MdClose, MdDelete, MdDone, MdEdit } from "react-icons/md"
+import { Link } from "react-router-dom"
+import Loader from "../../components/Loader/Loader"
 import axios from "../../utils/axios"
+import styles from "./blogsPage.module.css"
 
 export default function BlogsPage() {
     const [blogs, setBlogs] = useState([])
     const [isFetching, setIsFetching] = useState(true)
 
-    const fetchBlogs = async () => {
+    const fetchPosts = async () => {
         const { data } = await axios.get("/users/me/posts")
-        console.log(data);
+
         setBlogs(data)
+
         setIsFetching(false)
-        console.log(data);
     }
 
-    const handleDeleteBlog = async (blogId) => {
+    const handleDeletePost = async (blogId) => {
         setIsFetching(true)
-        const {data} = await axios.delete(`/users/me/posts/${blogId}`)
-        console.log(data);
+
+        await axios.delete(`/users/me/posts/${blogId}`)
+
         setBlogs(blogs.filter(blog => blog._id !== blogId))
+
         setIsFetching(false)
     }
 
     useEffect(() => {
-        fetchBlogs()
+        fetchPosts()
     }, [])
 
+    if(isFetching) {
+        return <Loader/>
+    }
+
     return (
-        <div className={styles.container}>
-            <h2 className={styles.header}>My Blogs</h2>
-            <div className={table.table}>
+        <div>
+            <h2 className="text-lg mb-10">My Blogs</h2>
+
+            <div className="table">
                 <table>
                     <thead>
                         <tr>
                             <th width="60%">Title</th>
                             <th width="10%">Image</th>
-                            <th width="15%">Posted At</th>
-                            <th width="15%">Approved</th>
+                            <th width="10%">Posted At</th>
+                            <th width="5%">Approved</th>
                             <th width="15%">Action</th>
                         </tr>
                     </thead>
@@ -57,19 +62,22 @@ export default function BlogsPage() {
                                     <p className={styles.title}>{blog.title}</p>
                                 </td>
                                 <td>
-                                    <img src={blog.image.url}/>
+                                    <img src={blog.image.url} />
                                 </td>
                                 <td>{blog.createdAt}</td>
                                 <td>
-                                    {blog.isApproved ? <MdDoneOutline size={24}/> : <MdClose size={24}/>}
+                                    {blog.isApproved ? <MdDone fill="green" size={24} /> : <MdClose fill="red" size={24} />}
                                 </td>
                                 <td>
-                                    <Link to={`/edit-post/${blog._id}`} className={button.btn} data-btn-sm data-warning style={{marginRight: 4}}>
-                                        <MdEdit size={24} fill="white"/>
-                                    </Link>
-                                    <button onClick={() => handleDeleteBlog(blog._id)} className={button.btn} data-btn-sm data-danger>
-                                        <MdDelete size={24} fill="white"/>
-                                    </button>
+                                    <div className="btn-gap">
+                                        <Link to={`/edit-post/${blog._id}`} className="btn btn-warning btn-sm">
+                                            <MdEdit size={24} fill="white" />
+                                        </Link>
+
+                                        <button onClick={() => handleDeletePost(blog._id)} className="btn btn-danger btn-sm">
+                                            <MdDelete size={24} fill="white" />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

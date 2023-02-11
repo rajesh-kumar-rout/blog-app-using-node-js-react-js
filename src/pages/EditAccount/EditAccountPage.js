@@ -3,9 +3,8 @@ import { useContext } from "react"
 import { toast } from "react-toastify"
 import { object, string } from "yup"
 import { AuthContext } from "../../components/Auth"
-import button from "../../styles/Button.module.css"
-import form from "../../styles/Form.module.css"
 import axios from "../../utils/axios"
+import { handleImage } from "../../utils/functions"
 
 const validationSchema = object().shape({
     name: string()
@@ -24,20 +23,23 @@ const validationSchema = object().shape({
 export default function EditAccountPage() {
     const { currentUser, setCurrentUser } = useContext(AuthContext)
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
 
         try {
             const { data } = await axios.patch("/auth/edit-profile", values)
-            console.log(data);
+
             setCurrentUser({
                 ...currentUser,
                 name: values.name,
                 email: values.email,
                 profileImage: data.profileImage
             })
+
             toast.success("Account edited successfully")
+
         } catch ({ response }) {
+
             response?.status === 409 && toast.error("Email already taken")
         }
 
@@ -55,55 +57,46 @@ export default function EditAccountPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting, setFieldValue }) => (
-                <Form className={form.form}>
-                    <div className={form.header}>Edit Account</div>
+                <Form className="card mx-auto max-w-600">
+                    <div className="card-header card-title">Edit Account</div>
 
-                    <div className={form.body}>
-                        <div className={form.group}>
-                            <label htmlFor="name" className={form.textLabel}>Name</label>
+                    <div className="card-body">
+                        <div className="mb-5">
+                            <label htmlFor="name" className="form-label">Name</label>
                             <Field
                                 type="text"
                                 id="name"
-                                className={form.textInput}
+                                className="form-control"
                                 name="name"
                             />
-                            <ErrorMessage name="name" component="p" className={form.errorText} />
+                            <ErrorMessage name="name" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="email" className={form.textLabel}>Email</label>
+                        <div className="mb-5">
+                            <label htmlFor="email" className="form-label">Email</label>
                             <Field
                                 type="email"
                                 id="email"
-                                className={form.textInput}
+                                className="form-control"
                                 name="email"
                             />
-                            <ErrorMessage name="email" component="p" className={form.errorText} />
+                            <ErrorMessage name="email" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="profileImg" className={form.textLabel}>Profile Image</label>
+                        <div className="mb-5">
+                            <label htmlFor="profileImg" className="form-label">Profile Image</label>
                             <input
                                 type="file"
                                 id="profileImg"
-                                className={form.textInput}
+                                className="form-control"
                                 name="profileImg"
-                                onChange={event => {
-                                    const reader = new FileReader()
-
-                                    reader.readAsDataURL(event.target.files[0])
-                                    reader.onload = () => {
-                                        setFieldValue("profileImage", reader.result)
-                                    }
-                                }}
-                                accept="image/jpeg, image/png, image/jpg"
+                                onChange={event => handleImage(event, setFieldValue)}
+                                accept=".png, .jpeg, .jpg"
                             />
                         </div>
 
                         <button
-                            className={button.btn}
-                            data-full
-                            data-primary
+                            className="btn btn-primary w-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Save"}

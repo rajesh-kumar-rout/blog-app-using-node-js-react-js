@@ -30,11 +30,11 @@ export default function BlogDetailsPage() {
     }
 
     return (
-        <div className={styles.container}>
+        <div className="post-details">
             <BlogDetails blog={blog} />
             <div>
-                <h4 className={styles.title}>Related Post</h4>
-                <div className={styles.posts}>
+                <h4 className="post-details-title">Related Post</h4>
+                <div className="post-details-posts">
                     {relatedBlogs.map(blog => (
                         <RelatedBlog
                             key={blog.id}

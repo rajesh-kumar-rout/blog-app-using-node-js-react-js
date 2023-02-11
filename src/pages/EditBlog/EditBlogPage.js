@@ -6,7 +6,7 @@ import { object, string, number } from "yup"
 import { toast } from "react-toastify"
 import { useParams } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
-import { getBase64Img } from "../../utils/functions"
+import { getBase64Img, handleImage } from "../../utils/functions"
 
 const validationSchema = object().shape({
     title: string()
@@ -32,16 +32,23 @@ export default function EditBlogPage() {
 
     const fetchBlog = async () => {
         const blogRes = await axios.get(`/users/me/posts/${postId}`)
+
         const categoryRes = await axios.get("/categories")
+
         setBlog(blogRes.data)
+
         setCategories(categoryRes.data)
+
         setIsFetching(false)
     }
 
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
+
         await axios.patch(`/users/me/posts/${postId}`, values)
+
         toast.success("Blog edited successfully")
+
         setSubmitting(false)
     }
 
@@ -67,44 +74,37 @@ export default function EditBlogPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting, setFieldValue }) => (
-                <Form className={form.form}>
-                    <div className={form.header}>Edit Blog</div>
+                <Form className="card max-w-600 mx-auto">
+                    <div className="card-header card-title">Edit Post</div>
 
-                    <div className={form.body}>
-                        <div className={form.group}>
-                            <label htmlFor="title" className={form.textLabel}>Title</label>
+                    <div className="card-body">
+                        <div className="mb-5">
+                            <label htmlFor="title" className="form-label">Title</label>
                             <Field
                                 type="text"
                                 id="title"
                                 name="title"
-                                className={form.textInput}
+                                className="form-control"
                             />
-                            <ErrorMessage name="title" component="p" className={form.errorText} />
+                            <ErrorMessage name="title" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="image" className={form.textLabel}>Image</label>
+                        <div className="mb-5">
+                            <label htmlFor="image" className="form-label">Image</label>
                             <input
                                 type="file"
                                 id="image"
-                                className={form.textInput}
+                                className="form-control"
                                 name="image"
-                                onChange={event => {
-                                    const reader = new FileReader()
-
-                                    reader.readAsDataURL(event.target.files[0])
-                                    reader.onload = () => {
-                                        setFieldValue("image", reader.result)
-                                    }
-                                }}
-                                accept="image/png, image/jpeg, image/jpg"
+                                onChange={event => handleImage(event, setFieldValue)}
+                                accept=".png, .jpeg, .jpg"
                             />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="category" className={form.textLabel}>Category</label>
+                        <div className="mb-5">
+                            <label htmlFor="category" className="form-label">Category</label>
                             <Field
-                                className={form.textInput}
+                                className="form-control"
                                 name="categoryId"
                                 as="select"
                                 defaultValue={blog.categoryId}
@@ -113,25 +113,23 @@ export default function EditBlogPage() {
                                     <option key={category._id}  value={category._id}>{category.name}</option>
                                 ))}
                             </Field>
-                            <ErrorMessage name="categoryId" component="p" className={form.errorText} />
+                            <ErrorMessage name="categoryId" component="p" className="form-error" />
                         </div>
 
-                        <div className={form.group}>
-                            <label htmlFor="content" className={form.textLabel}>Content</label>
+                        <div className="mb-5">
+                            <label htmlFor="content" className="form-label">Content</label>
                             <Field
                                 id="content"
-                                className={form.textInput}
+                                className="form-control"
                                 name="content"
                                 as="textarea"
                             />
-                            <ErrorMessage name="content" component="p" className={form.errorText} />
+                            <ErrorMessage name="content" component="p" className="form-error" />
                         </div>
 
                         <button
                             type="submit"
-                            className={button.btn}
-                            data-primary
-                            data-full
+                            className="btn btn-primary w-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Update"}

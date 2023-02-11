@@ -18,7 +18,7 @@ export default function HomePage() {
     }, [])
 
     return (
-        <div>
+        <div className="home">
             {posts.map(post => (
                 <Post
                     key={post.id}
