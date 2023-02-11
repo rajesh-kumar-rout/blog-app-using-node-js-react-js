@@ -106,7 +106,7 @@ routes.patch(
 
         const { postId } = req.params
 
-        const { _id } = req
+        const { _id, isAdmin } = req
 
         if (!await Category.findById(categoryId)) {
             return res.status(404).json({ error: "Category not found" })
@@ -123,6 +123,8 @@ routes.patch(
         post.content = content
 
         post.categoryId = categoryId
+
+        post.isApproved = isAdmin
 
         if (image) {
             await destroy(post.image.id)

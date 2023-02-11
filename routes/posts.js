@@ -4,6 +4,7 @@ import { checkValidationError } from "../utils/validation.js"
 import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
 import { param } from "express-validator"
 import User from "../models/user.js"
+import { destroy } from "../utils/cloudinary.js"
 
 const routes = Router()
 
@@ -95,6 +96,33 @@ routes.patch(
         post.isApproved = true
 
         await post.save()
+
+        res.json(post)
+    }
+)
+routes.delete(
+    "/:postId",
+
+    isAuthenticated,
+
+    isAdmin,
+
+    param("postId").isMongoId(),
+
+    checkValidationError,
+
+    async (req, res) => {
+        const { postId } = req.params
+
+        const post = await Post.findById(postId)
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" })
+        }
+
+        await destroy(post.image.url)
+
+        await post.delete()
 
         res.json(post)
     }
