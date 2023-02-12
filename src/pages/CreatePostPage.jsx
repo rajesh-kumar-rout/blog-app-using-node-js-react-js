@@ -1,8 +1,11 @@
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
+import { CKEditor } from "@ckeditor/ckeditor5-react"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import Loader from "../components/Loader"
 import axios from "../utils/axios"
+import { handleImage } from "../utils/functions"
 import { postSchema } from "../utils/validationSchemas"
 
 export default function CreatePostPage() {
@@ -41,7 +44,7 @@ export default function CreatePostPage() {
     }, [])
 
     if (isFetching) {
-        return <Loader/>
+        return <Loader />
     }
 
     return (
@@ -55,12 +58,12 @@ export default function CreatePostPage() {
             validationSchema={postSchema}
             onSubmit={handleSubmit}
         >
-            {({ isSubmitting, setFieldValue }) => (
-                <Form className="card max-w-600 mx-auto">
-                    <div className="card-header card-title">Create New Blog</div>
+            {({ isSubmitting, setFieldValue, values, setFieldTouched }) => (
+                <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
+                    <div className="card-header card-title">Create New Post</div>
 
                     <div className="card-body">
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="title" className="form-label">Title</label>
                             <Field
                                 type="text"
@@ -71,27 +74,21 @@ export default function CreatePostPage() {
                             <ErrorMessage name="title" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
-                            <label htmlFor="img" className="form-label">Image</label>
+                        <div className="form-group">
+                            <label htmlFor="image" className="form-label">Image</label>
                             <input
                                 type="file"
-                                id="img"
+                                id="image"
+                                name="image"
                                 className="form-control"
-                                onChange={event => {
-                                    const reader = new FileReader()
-
-                                    reader.readAsDataURL(event.target.files[0])
-                                    reader.onload = () => {
-                                        setFieldValue("image", reader.result)
-                                    }
-                                }}
+                                onChange={event => handleImage(event, setFieldValue)}
                                 accept=".png, .jpeg, .jpg"
                                 required
                                 ref={imgRef}
                             />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="categoryId" className="form-label">Category</label>
                             <Field
                                 className="form-control"
@@ -106,20 +103,20 @@ export default function CreatePostPage() {
                             <ErrorMessage name="categoryId" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="content" className="form-label">Content</label>
-                            <Field
-                                id="content"
-                                className="form-control"
-                                name="content"
-                                as="textarea"
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={values.content}
+                                onChange={(_, editor) => setFieldValue("content", editor.getData())}
+                                onBlur={() => setFieldTouched("content", true)}
                             />
                             <ErrorMessage name="content" component="p" className="form-error" />
                         </div>
 
                         <button
                             type="submit"
-                            className="btn btn-primary w-full"
+                            className="btn btn-primary btn-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Save"}

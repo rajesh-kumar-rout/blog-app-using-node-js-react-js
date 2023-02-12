@@ -1,4 +1,4 @@
-import { object, string, ref } from "yup"
+import { object, ref, string } from "yup"
 
 export const postSchema = object().shape({
     title: string()
@@ -63,7 +63,7 @@ export const registerSchema = object().shape({
 })
 
 export const loginSchema = object().shape({
-    email: string().required("Email is required"),
+    email: string().email().required("Email is required"),
 
     password: string().required("Password is required")
 })

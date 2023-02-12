@@ -1,3 +1,4 @@
+import moment from "moment"
 import { useEffect, useState } from "react"
 import { MdClose, MdDelete, MdDone, MdEdit } from "react-icons/md"
 import { Link } from "react-router-dom"
@@ -36,7 +37,7 @@ export default function MyPostsPage() {
 
     return (
         <div>
-            <h2 className="text-lg mb-10">My Blogs</h2>
+            <h2 className="table-heading">My Blogs</h2>
 
             <div className="table">
                 <table>
@@ -63,7 +64,7 @@ export default function MyPostsPage() {
                                 <td>
                                     <img src={blog.image.url} />
                                 </td>
-                                <td>{blog.createdAt}</td>
+                                <td>{moment(blog.createdAt).format("DD MMM YYYY")}</td>
                                 <td>
                                     {blog.isApproved ? <MdDone fill="green" size={24} /> : <MdClose fill="red" size={24} />}
                                 </td>

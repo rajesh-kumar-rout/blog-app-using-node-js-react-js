@@ -62,11 +62,11 @@ export default function EditProfilePage() {
                 onSubmit={handleEditProfile}
             >
                 {({ isSubmitting, setFieldValue }) => (
-                    <Form className="card mx-auto max-w-600">
+                    <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
                         <div className="card-header text-bold">Edit Profile</div>
 
                         <div className="card-body">
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="name" className="form-label">Name</label>
                                 <Field
                                     type="text"
@@ -77,7 +77,7 @@ export default function EditProfilePage() {
                                 <ErrorMessage name="name" component="p" className="form-error" />
                             </div>
 
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="email" className="form-label">Email</label>
                                 <Field
                                     type="email"
@@ -88,7 +88,7 @@ export default function EditProfilePage() {
                                 <ErrorMessage name="email" component="p" className="form-error" />
                             </div>
 
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="profileImg" className="form-label">Profile Image</label>
                                 <input
                                     type="file"
@@ -122,11 +122,11 @@ export default function EditProfilePage() {
             >
                 {({ isSubmitting }) => (
 
-                    <Form className="card mx-auto max-w-600 mt-5">
+                    <Form className="card" style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
                         <p className="card-header text-bold">Change Password</p>
 
                         <div className="card-body">
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="oldPassword" className="form-label">Old Password</label>
                                 <Field
                                     type="password"
@@ -137,7 +137,7 @@ export default function EditProfilePage() {
                                 <ErrorMessage name="oldPassword" component="p" className="form-error" />
                             </div>
 
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="newPassword" className="form-label">New Password</label>
                                 <Field
                                     type="password"
@@ -148,7 +148,7 @@ export default function EditProfilePage() {
                                 <ErrorMessage name="newPassword" component="p" className="form-error" />
                             </div>
 
-                            <div className="mb-5">
+                            <div className="form-group">
                                 <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
                                 <Field
                                     type="password"

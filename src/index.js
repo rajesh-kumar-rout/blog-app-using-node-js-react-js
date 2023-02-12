@@ -1,14 +1,12 @@
 import React from "react"
-import App from "./App"
 import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
-import "react-toastify/dist/ReactToastify.css"
-import "./index.css"
-import "./styles/variables.css"
-import "./styles/reset.css"
-import "./styles/utilities.css"
-import "./styles/index.css"
 import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import App from "./App"
+import "./styles/index.css"
+import "./styles/reset.css"
+import "./styles/variables.css"
 
 const root = createRoot(document.getElementById("root"))
 

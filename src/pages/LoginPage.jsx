@@ -35,11 +35,14 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <Form className="card max-w-500 mx-auto">
+                <Form
+                    className="card"
+                    style={{ maxWidth: 500, margin: "auto" }}
+                >
                     <div className="card-header card-title">Login</div>
 
                     <div className="card-body">
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="email" className="form-label">Email</label>
                             <Field
                                 type="email"
@@ -50,7 +53,7 @@ export default function LoginPage() {
                             <ErrorMessage name="email" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="password" className="form-label">Password</label>
                             <Field
                                 type="password"
@@ -61,17 +64,19 @@ export default function LoginPage() {
                             <ErrorMessage name="password" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <button
                                 type="submit"
-                                className="btn btn-primary w-full"
+                                className="btn btn-primary btn-full"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Loading..." : "Login"}
                             </button>
                         </div>
 
-                        <p className="text-center">Do not have an account ? <Link className="text-underline" to="/register">Register</Link></p>
+                        <center>
+                            Do not have an account ? <Link style={{ textDecoration: "underline" }} to="/register">Register</Link>
+                        </center>
                     </div>
                 </Form>
             )}

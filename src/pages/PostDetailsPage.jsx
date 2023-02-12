@@ -38,7 +38,7 @@ export default function PostDetailsPage() {
 
             <div>
                 <h4 className="post-details-title">Related Post</h4>
-                <div >
+                <div className="post-details-posts">
                     {relatedPosts.map(post => <RelatedPost key={post.id} post={post} />)}
                 </div>
             </div>

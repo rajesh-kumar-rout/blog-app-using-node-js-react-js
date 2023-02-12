@@ -5,7 +5,7 @@ import axios from "../utils/axios"
 import { registerSchema } from "../utils/validationSchemas"
 
 export default function RegisterPage() {
-    
+
     const handleSubmit = async (values, { setSubmitting }) => {
         setSubmitting(true)
 
@@ -36,11 +36,11 @@ export default function RegisterPage() {
             onSubmit={handleSubmit}
         >
             {({ isSubmitting }) => (
-                <Form className="card max-w-500 mx-auto">
+                <Form className="card" style={{ maxWidth: 500, margin: "auto" }}>
                     <div className="card-header card-title">Register</div>
 
                     <div className="card-body">
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="name" className="form-label">Name</label>
                             <Field
                                 type="text"
@@ -51,7 +51,7 @@ export default function RegisterPage() {
                             <ErrorMessage name="name" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="email" className="form-label">Email</label>
                             <Field
                                 type="email"
@@ -62,7 +62,7 @@ export default function RegisterPage() {
                             <ErrorMessage name="email" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="password" className="form-label">Password</label>
                             <Field
                                 type="password"
@@ -73,7 +73,7 @@ export default function RegisterPage() {
                             <ErrorMessage name="password" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
                             <Field
                                 type="password"
@@ -84,17 +84,19 @@ export default function RegisterPage() {
                             <ErrorMessage name="confirmPassword" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <button
                                 type="submit"
-                                className="btn btn-primary w-full"
+                                className="btn btn-primary btn-full"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Loading" : "Register"}
                             </button>
                         </div>
 
-                        <p className="text-center">Already have an account ? <Link className="text-underline" to="/login">Login</Link></p>
+                        <center>
+                            Already have an account ? <Link style={{ textDecoration: "underline" }} to="/login">Login</Link>
+                        </center>
                     </div>
                 </Form>
             )}

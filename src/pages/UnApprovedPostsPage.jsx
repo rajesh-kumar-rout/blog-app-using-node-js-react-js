@@ -1,3 +1,4 @@
+import moment from "moment"
 import { useEffect, useState } from "react"
 import { MdVisibility } from "react-icons/md"
 import Loader from "../components/Loader"
@@ -50,8 +51,8 @@ export default function UnApprovedPostsPage() {
     }
 
     return (
-        <div className>
-            <h2 className="text-lg mb-10">Unapproved Posts</h2>
+        <div>
+            <h2 className="table-heading">Unapproved Posts</h2>
 
             <div className="table">
                 <table>
@@ -78,7 +79,7 @@ export default function UnApprovedPostsPage() {
                                 <td>
                                     <img src={post.image.url} />
                                 </td>
-                                <td>{post.createdAt}</td>
+                                <td>{moment(post.createdAt).format("DD MMM YYYY")}</td>
                                 <td>
                                     <div>
                                         {post.author.profileImage && <img src={post.author.profileImage.url} />}

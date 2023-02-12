@@ -1,4 +1,4 @@
-:root{
+:root {
     --gray50: #f9fafb;
     --gray100: #f3f4f6;
     --gray200: #e5e7eb;
@@ -13,10 +13,19 @@
     --yellow600: #ca8a04;
     --yellow800: #854d0e;
 
+    --red50: #fef2f2;
+    --red100: #fee2e2;
+    --red200: #fecaca;
+    --red300: #fca5a5;
     --red400: #f87171;
+    --red500: #ef4444;
     --red600: #dc2626;
+    --red700: #b91c1c;
     --red800: #991b1b;
 
     --white: #FFFFFF;
     --black: #000000;
+
+    --navbar-height: 70px;
+    --layout-height: var(100vh - var(--navbar-height));
 }

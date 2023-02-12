@@ -1,3 +1,5 @@
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
+import { CKEditor } from "@ckeditor/ckeditor5-react"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -42,8 +44,6 @@ export default function EditPostPage() {
         return <div>Loading...</div>
     }
 
-    console.log(post,'n');
-
     return (
         <Formik
             initialValues={{
@@ -55,12 +55,12 @@ export default function EditPostPage() {
             validationSchema={postSchema}
             onSubmit={handleSubmit}
         >
-            {({ isSubmitting, setFieldValue }) => (
-                <Form className="card max-w-600 mx-auto">
+            {({ isSubmitting, setFieldValue, setFieldTouched, values }) => (
+                <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
                     <div className="card-header card-title">Edit Post</div>
 
                     <div className="card-body">
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="title" className="form-label">Title</label>
                             <Field
                                 type="text"
@@ -71,7 +71,7 @@ export default function EditPostPage() {
                             <ErrorMessage name="title" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="image" className="form-label">Image</label>
                             <input
                                 type="file"
@@ -83,7 +83,7 @@ export default function EditPostPage() {
                             />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="category" className="form-label">Category</label>
                             <Field
                                 className="form-control"
@@ -98,20 +98,20 @@ export default function EditPostPage() {
                             <ErrorMessage name="categoryId" component="p" className="form-error" />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="form-group">
                             <label htmlFor="content" className="form-label">Content</label>
-                            <Field
-                                id="content"
-                                className="form-control"
-                                name="content"
-                                as="textarea"
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={values.content}
+                                onChange={(_, editor) => setFieldValue("content", editor.getData())}
+                                onBlur={() => setFieldTouched("content", true)}
                             />
                             <ErrorMessage name="content" component="p" className="form-error" />
                         </div>
 
                         <button
                             type="submit"
-                            className="btn btn-primary w-full"
+                            className="btn btn-primary btn-full"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "Loading..." : "Update"}

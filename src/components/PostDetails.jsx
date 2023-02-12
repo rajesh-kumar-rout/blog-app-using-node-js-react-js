@@ -1,3 +1,4 @@
+import moment from "moment"
 
 export default function PostDetails({ post }) {
 
@@ -9,7 +10,7 @@ export default function PostDetails({ post }) {
                 <img className="details-author-img" src={post.author.profileImage?.url} />
                 <div>
                     <h4 className="details-author-name">{post.author.name}</h4>
-                    <p className="details-created-at">Posted {post.createdAt}</p>
+                    <p className="details-created-at">Posted {moment(post.createdAt).format("DD MMMM YYYY")}</p>
                 </div>
             </div>
             

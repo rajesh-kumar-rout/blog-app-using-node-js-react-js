@@ -28,7 +28,7 @@ export default function NavBar() {
                 <Link to="/" className="navbar-title">BLOG.IO</Link>
 
                 {currentUser ? (
-                    <div className="relative">
+                    <div className="navbar-dropdown-wrapper">
                         <div className="navbar-dropdown-btn" onClick={handleDropDown}>
                             <p>{currentUser.name}</p>
 

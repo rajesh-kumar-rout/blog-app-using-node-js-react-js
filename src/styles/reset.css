@@ -1,12 +1,23 @@
 * {
-    margin: 0%;
-    padding: 0%;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    color: inherit;
+    font-size: inherit;
+}
+
+body {
+    color: var(--gray700);
+    font-size: 16px;
+}
+
+a {
     text-decoration: none;
-    border: none;
-    outline: none;
-    background: none;
+}
+
+ul {
+    list-style-type: none;
 }
 
 img {
