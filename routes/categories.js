@@ -1,10 +1,9 @@
 import { Router } from "express"
-import { param } from "express-validator"
+import { body, param } from "express-validator"
+import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
 import Category from "../models/category.js"
 import Post from "../models/post.js"
 import { checkValidationError } from "../utils/validation.js"
-import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
-import { body } from "express-validator"
 
 const routes = Router()
 

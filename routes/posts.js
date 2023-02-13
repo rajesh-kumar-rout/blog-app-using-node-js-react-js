@@ -1,10 +1,10 @@
 import { Router } from "express"
-import Post from "../models/post.js"
-import { checkValidationError } from "../utils/validation.js"
-import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
 import { param } from "express-validator"
+import { isAdmin, isAuthenticated } from "../middlewares/authentication.js"
+import Post from "../models/post.js"
 import User from "../models/user.js"
 import { destroy } from "../utils/cloudinary.js"
+import { checkValidationError } from "../utils/validation.js"
 
 const routes = Router()
 

@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt"
+import dotenv from "dotenv"
 import { Router } from "express"
 import { body } from "express-validator"
 import jwt from "jsonwebtoken"
-import User from "../models/user.js"
-import { checkValidationError } from "../utils/validation.js"
-import dotenv from "dotenv"
 import { isAuthenticated } from "../middlewares/authentication.js"
+import User from "../models/user.js"
 import { destroy, upload } from "../utils/cloudinary.js"
+import { checkValidationError } from "../utils/validation.js"
 
 dotenv.config()
 
