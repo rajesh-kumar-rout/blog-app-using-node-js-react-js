@@ -60,7 +60,7 @@ export default function CreatePostPage() {
         >
             {({ isSubmitting, setFieldValue, values, setFieldTouched }) => (
                 <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                    <div className="card-header card-title">Create New Post</div>
+                    <p className="card-header card-title">Create New Post</p>
 
                     <div className="card-body">
                         <div className="form-group">

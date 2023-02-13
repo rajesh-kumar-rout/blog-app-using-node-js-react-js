@@ -36,11 +36,8 @@ export default function LoginPage() {
                 onSubmit={handleSubmit}
             >
                 {({ isSubmitting }) => (
-                    <Form
-                        className="card"
-                        style={{ maxWidth: 500, margin: "auto" }}
-                    >
-                        <div className="card-header card-title">Login</div>
+                    <Form className="card" style={{ maxWidth: 500, margin: "auto" }}>
+                        <p className="card-header card-title">Login</p>
 
                         <div className="card-body">
                             <div className="form-group">
@@ -86,8 +83,8 @@ export default function LoginPage() {
             <div className="card" style={{ maxWidth: 500, margin: "16px auto 0px" }}>
                 <h2 className="card-header card-title">For testing purpose</h2>
                 <div className="card-body">
-                    <p>For admin use - <br /> email: <b>admin@admin.com</b> <br /> password: <b>123456</b></p> <br />
-                    <p>For user use - <br /> email: <b>john@john.com</b> <br /> password: <b>123456</b></p>
+                    <p>For admin use - <br /> email: <b style={{fontWeight: "bold"}}>admin@admin.com</b> <br /> password: <b style={{fontWeight: "bold"}}>123456</b></p> <br />
+                    <p>For user use - <br /> email: <b style={{fontWeight: "bold"}}>john@john.com</b> <br /> password: <b style={{fontWeight: "bold"}}>123456</b></p>
                 </div>
             </div>
         </>

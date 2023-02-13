@@ -63,7 +63,7 @@ export default function EditProfilePage() {
             >
                 {({ isSubmitting, setFieldValue }) => (
                     <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                        <div className="card-header" style={{ fontWeight: "bold" }}>Edit Profile</div>
+                        <p className="card-header" style={{ fontWeight: "bold" }}>Edit Profile</p>
 
                         <div className="card-body">
                             <div className="form-group">

@@ -31,7 +31,7 @@ export default function EditCategoryPage() {
         >
             {({ isSubmitting }) => (
                 <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                    <div className="card-header card-title">Edit Category</div>
+                    <p className="card-header card-title">Edit Category</p>
 
                     <div className="card-body">
                         <div className="form-group">

@@ -31,7 +31,7 @@ export default function CreateCategoryPage() {
         >
             {({ isSubmitting }) => (
                 <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                    <div className="card-header card-title">Create New Category</div>
+                    <p className="card-header card-title">Create New Category</p>
 
                     <div className="card-body">
                         <div className="form-group">

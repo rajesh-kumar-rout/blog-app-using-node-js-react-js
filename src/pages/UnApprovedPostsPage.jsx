@@ -52,8 +52,8 @@ export default function UnApprovedPostsPage() {
 
     return (
         <div>
-            <h2 className="table-title" style={{marginBottom: 16}}>Unapproved Posts</h2>
-
+            <p className="table-title" style={{marginBottom: 16}}>Unapproved Posts</p>
+            
             <div className="table">
                 <table>
                     <thead>

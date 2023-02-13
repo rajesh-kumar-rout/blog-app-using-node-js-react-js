@@ -38,7 +38,7 @@ export default function MyPostsPage() {
     return (
         <div>
             <div className="table-header">
-                <h2 className="table-title">My Posts</h2>
+                <p className="table-title">My Posts</p>
                 <Link to="/create-post" className="btn btn-primary">Create New</Link>
             </div>
 

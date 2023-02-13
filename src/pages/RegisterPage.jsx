@@ -37,7 +37,7 @@ export default function RegisterPage() {
         >
             {({ isSubmitting }) => (
                 <Form className="card" style={{ maxWidth: 500, margin: "auto" }}>
-                    <div className="card-header card-title">Register</div>
+                    <p className="card-header card-title">Register</p>
 
                     <div className="card-body">
                         <div className="form-group">

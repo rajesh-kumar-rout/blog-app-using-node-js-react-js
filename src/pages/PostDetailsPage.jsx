@@ -38,6 +38,9 @@ export default function PostDetailsPage() {
 
             <div>
                 <h4 className="post-details-title">Related Post</h4>
+                {relatedPosts.length === 0 && (
+                    <p>No Posts Found</p>
+                )}
                 <div className="post-details-posts">
                     {relatedPosts.map(post => <RelatedPost key={post.id} post={post} />)}
                 </div>

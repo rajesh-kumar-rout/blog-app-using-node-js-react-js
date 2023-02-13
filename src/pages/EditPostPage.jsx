@@ -57,7 +57,7 @@ export default function EditPostPage() {
         >
             {({ isSubmitting, setFieldValue, setFieldTouched, values }) => (
                 <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                    <div className="card-header card-title">Edit Post</div>
+                    <p className="card-header card-title">Edit Post</p>
 
                     <div className="card-body">
                         <div className="form-group">
