@@ -33,15 +33,19 @@ export default function NavBar() {
                             <p>{currentUser.name}</p>
 
                             <img className="navbar-dropdown-img" src={currentUser.profileImage?.url} />
-                            
+
                             <MdArrowDropDown size={24} />
                         </div>
 
                         {isDropDownOpened && (
                             <div className="navbar-dropdown">
-                                {currentUser.isAdmin && <Link className="navbar-dropdown-link" to="/unapproved-posts">Unapproved Posts</Link>}
-                                <Link className="navbar-dropdown-link" to="/posts">My Blogs</Link>
-                                <Link className="navbar-dropdown-link" to="/create-post">Post New Blog</Link>
+                                {currentUser.isAdmin && (
+                                    <>
+                                        <Link className="navbar-dropdown-link" to="/unapproved-posts">Unapproved Posts</Link>
+                                        <Link className="navbar-dropdown-link" to="/categories">Categories</Link>
+                                    </>
+                                )}
+                                <Link className="navbar-dropdown-link" to="/posts">My Posts</Link>
                                 <Link className="navbar-dropdown-link" to="/edit-profile">Edit Profile</Link>
                                 <Link className="navbar-dropdown-link" onClick={handleLogout}>Logout</Link>
                             </div>

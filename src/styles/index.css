@@ -76,7 +76,7 @@
 .navbar-title {
     color: var(--gray600);
     font-size: 28px;
-    font-weight: 800;
+    font-weight: bold;
 }
 
 .navbar-dropdown-wrapper {
@@ -172,7 +172,7 @@
 }
 
 .post-details-title {
-    font-weight: 800;
+    font-weight: bold;
     border-bottom: 2px solid var(--gray600);
     padding-bottom: 12px;
     margin-bottom: 20px;
@@ -205,7 +205,7 @@
 }
 
 .card-title {
-    font-weight: 800;
+    font-weight: bold;
     text-align: center;
     font-size: 18px;
 }
@@ -321,14 +321,22 @@
     text-align: center;
 }
 
-.table-heading {
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.table-title {
     font-size: 18px;
-    margin-bottom: 10px;
+    font-weight: bold;
 }
 
 .table th {
     text-transform: uppercase;
     font-size: 14px;
+    font-weight: bold;
 }
 
 .table table {
@@ -393,7 +401,7 @@
 .modal-header {
     padding: 16px 20px;
     border-bottom: 2px solid var(--gray300);
-    font-weight: 800;
+    font-weight: bold;
 }
 
 .modal-body {

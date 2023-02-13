@@ -67,3 +67,7 @@ export const loginSchema = object().shape({
 
     password: string().required("Password is required")
 })
+
+export const categorySchema = object().shape({
+    name: string().trim().max(30, "Category must be within 30 characters").required("Name is required")
+})

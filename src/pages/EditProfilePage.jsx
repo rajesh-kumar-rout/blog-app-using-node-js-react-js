@@ -63,7 +63,7 @@ export default function EditProfilePage() {
             >
                 {({ isSubmitting, setFieldValue }) => (
                     <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                        <div className="card-header" style={{ fontWeight: 800 }}>Edit Profile</div>
+                        <div className="card-header" style={{ fontWeight: "bold" }}>Edit Profile</div>
 
                         <div className="card-body">
                             <div className="form-group">
@@ -89,12 +89,12 @@ export default function EditProfilePage() {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="profileImg" className="form-label">Profile Image</label>
+                                <label htmlFor="profileImage" className="form-label">Profile Image</label>
                                 <input
                                     type="file"
-                                    id="profileImg"
+                                    id="profileImage"
                                     className="form-control"
-                                    name="profileImg"
+                                    name="profileImage"
                                     onChange={event => handleImage(event, setFieldValue)}
                                     accept=".png, .jpeg, .jpg"
                                 />
@@ -123,7 +123,7 @@ export default function EditProfilePage() {
                 {({ isSubmitting }) => (
 
                     <Form className="card" style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
-                        <p className="card-header" style={{ fontWeight: 800 }}>Change Password</p>
+                        <p className="card-header" style={{ fontWeight: "bold" }}>Change Password</p>
 
                         <div className="card-body">
                             <div className="form-group">

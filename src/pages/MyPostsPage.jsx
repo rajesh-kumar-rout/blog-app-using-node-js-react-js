@@ -31,13 +31,16 @@ export default function MyPostsPage() {
         fetchPosts()
     }, [])
 
-    if(isFetching) {
-        return <Loader/>
+    if (isFetching) {
+        return <Loader />
     }
 
     return (
         <div>
-            <h2 className="table-heading">My Blogs</h2>
+            <div className="table-header">
+                <h2 className="table-title">My Posts</h2>
+                <Link to="/create-post" className="btn btn-primary">Create New</Link>
+            </div>
 
             <div className="table">
                 <table>

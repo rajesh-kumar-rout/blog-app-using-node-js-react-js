@@ -26,60 +26,70 @@ export default function LoginPage() {
     }
 
     return (
-        <Formik
-            initialValues={{
-                email: "",
-                password: ""
-            }}
-            validationSchema={loginSchema}
-            onSubmit={handleSubmit}
-        >
-            {({ isSubmitting }) => (
-                <Form
-                    className="card"
-                    style={{ maxWidth: 500, margin: "auto" }}
-                >
-                    <div className="card-header card-title">Login</div>
+        <>
+            <Formik
+                initialValues={{
+                    email: "",
+                    password: ""
+                }}
+                validationSchema={loginSchema}
+                onSubmit={handleSubmit}
+            >
+                {({ isSubmitting }) => (
+                    <Form
+                        className="card"
+                        style={{ maxWidth: 500, margin: "auto" }}
+                    >
+                        <div className="card-header card-title">Login</div>
 
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="email" className="form-label">Email</label>
-                            <Field
-                                type="email"
-                                id="email"
-                                className="form-control"
-                                name="email"
-                            />
-                            <ErrorMessage name="email" component="p" className="form-error" />
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Email</label>
+                                <Field
+                                    type="email"
+                                    id="email"
+                                    className="form-control"
+                                    name="email"
+                                />
+                                <ErrorMessage name="email" component="p" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="password" className="form-label">Password</label>
+                                <Field
+                                    type="password"
+                                    id="password"
+                                    className="form-control"
+                                    name="password"
+                                />
+                                <ErrorMessage name="password" component="p" className="form-error" />
+                            </div>
+
+                            <div className="form-group">
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary btn-full"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? "Loading..." : "Login"}
+                                </button>
+                            </div>
+
+                            <center>
+                                Do not have an account ? <Link style={{ textDecoration: "underline" }} to="/register">Register</Link>
+                            </center>
                         </div>
+                    </Form>
+                )}
+            </Formik>
 
-                        <div className="form-group">
-                            <label htmlFor="password" className="form-label">Password</label>
-                            <Field
-                                type="password"
-                                id="password"
-                                className="form-control"
-                                name="password"
-                            />
-                            <ErrorMessage name="password" component="p" className="form-error" />
-                        </div>
-
-                        <div className="form-group">
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-full"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "Loading..." : "Login"}
-                            </button>
-                        </div>
-
-                        <center>
-                            Do not have an account ? <Link style={{ textDecoration: "underline" }} to="/register">Register</Link>
-                        </center>
-                    </div>
-                </Form>
-            )}
-        </Formik>
+            <div className="card" style={{ maxWidth: 500, margin: "16px auto 0px" }}>
+                <h2 className="card-header card-title">For testing purpose</h2>
+                <div className="card-body">
+                    <p>For admin use - <br /> email: <b>admin@admin.com</b> <br /> password: <b>123456</b></p> <br />
+                    <p>For user use - <br /> email: <b>john@john.com</b> <br /> password: <b>123456</b></p>
+                </div>
+            </div>
+        </>
     )
 }

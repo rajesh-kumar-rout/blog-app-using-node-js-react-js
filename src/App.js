@@ -13,6 +13,9 @@ import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import UnApprovedPostsPage from "./pages/UnApprovedPostsPage"
+import CategoriesPage from "./pages/CategoriesPage"
+import EditCategoryPage from "./pages/EditCategoryPage"
+import CreateCategoryPage from "./pages/CreateCategoryPage"
 
 export default function App() {
     return (
@@ -29,6 +32,9 @@ export default function App() {
                         <Route path="/posts" element={<MyPostsPage />} />
                         <Route element={<Admin />}>
                             <Route path="/unapproved-posts" element={<UnApprovedPostsPage />} />
+                            <Route path="/categories" element={<CategoriesPage />} />
+                            <Route path="/edit-category" element={<EditCategoryPage />} />
+                            <Route path="/create-category" element={<CreateCategoryPage />} />
                         </Route>
                     </Route>
 
