@@ -43,7 +43,7 @@ export default function EditProfilePage() {
             resetForm()
 
         } catch ({ response }) {
-            
+
             response?.status === 422 && toast.error("Old password does not match")
         }
 
@@ -63,7 +63,7 @@ export default function EditProfilePage() {
             >
                 {({ isSubmitting, setFieldValue }) => (
                     <Form className="card" style={{ maxWidth: 600, margin: "auto" }}>
-                        <div className="card-header text-bold">Edit Profile</div>
+                        <div className="card-header" style={{ fontWeight: 800 }}>Edit Profile</div>
 
                         <div className="card-body">
                             <div className="form-group">
@@ -123,7 +123,7 @@ export default function EditProfilePage() {
                 {({ isSubmitting }) => (
 
                     <Form className="card" style={{ maxWidth: 600, margin: "auto", marginTop: 20 }}>
-                        <p className="card-header text-bold">Change Password</p>
+                        <p className="card-header" style={{ fontWeight: 800 }}>Change Password</p>
 
                         <div className="card-body">
                             <div className="form-group">
