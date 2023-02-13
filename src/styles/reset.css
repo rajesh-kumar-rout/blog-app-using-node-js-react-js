@@ -5,6 +5,7 @@
     font-family: 'Poppins', sans-serif;
     color: inherit;
     font-size: inherit;
+    font-weight: normal;
 }
 
 body {
@@ -29,4 +30,46 @@ img {
 
 svg {
     display: block;
+}
+
+.ck-content {
+    line-height: 36px;
+}
+
+.ckeditor-content a,
+.ck-content a{
+    text-decoration: underline;
+    color: blue;
+}
+
+.ckeditor-content h4,
+.ck-content h4{
+    font-size: 18px;
+}
+
+.ckeditor-content h3,
+.ck-content h3{
+    font-size: 20px;
+}
+
+.ckeditor-content h2,
+.ck-content h2{
+    font-size: 22px;
+}
+
+.ckeditor-content strong,
+.ck-content strong{
+    font-weight: bold;
+}
+
+.ckeditor-content ul,
+.ck-content ul{
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+.ckeditor-content ol,
+.ck-content ol{
+    list-style-type: decimal;
+    list-style-position: inside;
 }

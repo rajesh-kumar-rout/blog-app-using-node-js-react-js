@@ -32,7 +32,7 @@ export default function NavBar() {
                         <div className="navbar-dropdown-btn" onClick={handleDropDown}>
                             <p>{currentUser.name}</p>
 
-                            <img className="navbar-dropdown-img" src={currentUser.profileImage?.url} />
+                            <img className="navbar-dropdown-img" src={currentUser.profileImage ? currentUser.profileImage?.url : process.env.REACT_APP_DEFAULT_PROFILE_IMAGE} />
 
                             <MdArrowDropDown size={24} />
                         </div>

@@ -15,7 +15,7 @@ export default function PostDetails({ post }) {
             </div>
             
             <h2 className="details-title">{post.title}</h2>
-            <p dangerouslySetInnerHTML={{ __html: post.content }} className="details-content"></p>
+            <p dangerouslySetInnerHTML={{ __html: post.content }} className="ckeditor-content details-content"></p>
         </div>
     )
 }

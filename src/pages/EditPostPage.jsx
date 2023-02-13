@@ -4,6 +4,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { toast } from "react-toastify"
+import Loader from "../components/Loader"
 import axios from "../utils/axios"
 import { handleImage } from "../utils/functions"
 import { postSchema } from "../utils/validationSchemas"
@@ -41,7 +42,7 @@ export default function EditPostPage() {
     }, [])
 
     if(isFetching) {
-        return <div>Loading...</div>
+        return <Loader/>
     }
 
     return (
